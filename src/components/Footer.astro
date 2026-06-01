@@ -1,0 +1,116 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer>
+  <!-- PARTNERS -->
+  <section class="border-t border-ink/[0.06] bg-gradient-to-b from-shell to-white">
+    <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:px-8 lg:py-16">
+      <p class="zs-eyebrow is-center mx-auto w-fit justify-center">Een initiatief van</p>
+
+      <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <!-- Provincie Zeeland -->
+        <div class="flex items-center justify-center gap-3.5 rounded-2xl bg-white p-6 shadow-card ring-1 ring-ink/[0.05] transition hover:-translate-y-0.5 hover:shadow-float">
+          <svg width="34" height="38" viewBox="0 0 32 36" fill="none" class="shrink-0 text-sea-700" aria-hidden="true">
+            <path d="M16 2 30 6.5V18c0 9-6.5 14-14 16C8.5 32 2 27 2 18V6.5z" stroke="currentColor" stroke-width="2"></path>
+            <path d="M8.5 15.5c1.8 0 1.8-1.5 3.7-1.5s1.9 1.5 3.8 1.5 1.9-1.5 3.8-1.5 1.8 1.5 3.7 1.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+            <path d="M8.5 20.5c1.8 0 1.8-1.5 3.7-1.5s1.9 1.5 3.8 1.5 1.9-1.5 3.8-1.5 1.8 1.5 3.7 1.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" opacity="0.55"></path>
+          </svg>
+          <span class="leading-none">
+            <span class="block font-display text-[10px] font-bold uppercase tracking-[0.22em] text-mist">Provincie</span>
+            <span class="mt-1 block font-display text-xl font-extrabold tracking-tight text-ink">Zeeland</span>
+          </span>
+        </div>
+
+        <!-- Dockwize -->
+        <div class="flex items-center justify-center gap-3.5 rounded-2xl bg-white p-6 shadow-card ring-1 ring-ink/[0.05] transition hover:-translate-y-0.5 hover:shadow-float">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" class="shrink-0" aria-hidden="true">
+            <rect x="3" y="3" width="30" height="30" rx="9" class="fill-sea-700"></rect>
+            <path d="M11 24.5V12l7 6 7-6v12.5" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <span class="font-display text-xl font-extrabold tracking-tight text-ink">Dockwize<span class="text-coral-500">.</span></span>
+        </div>
+
+        <!-- CO3 Campus -->
+        <div class="flex items-center justify-center gap-3.5 rounded-2xl bg-white p-6 shadow-card ring-1 ring-ink/[0.05] transition hover:-translate-y-0.5 hover:shadow-float">
+          <svg width="34" height="38" viewBox="0 0 34 38" fill="none" class="shrink-0 text-sea-700" aria-hidden="true">
+            <path d="M17 2 31 10v18l-14 8L3 28V10z" stroke="currentColor" stroke-width="2"></path>
+            <circle cx="17" cy="19" r="4.6" fill="currentColor"></circle>
+          </svg>
+          <span class="font-display text-xl font-extrabold tracking-tight text-ink">CO<sup class="text-[0.6em] font-bold">3</sup> Campus</span>
+        </div>
+      </div>
+
+      <p class="mt-7 text-center text-sm text-mist">
+        Samen met de werkgroep mobiliteit Zeeland.
+        <a href="/plaatsen" class="font-semibold text-sea-600 transition hover:text-sea-700">Word partner &rarr;</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="relative overflow-hidden bg-night text-white/70">
+    <div class="zs-hairline pointer-events-none absolute inset-x-0 top-0 h-px"></div>
+    <div class="pointer-events-none absolute -left-24 -top-24 h-80 w-80 rounded-full bg-sea-600/20 blur-3xl"></div>
+    <div class="pointer-events-none absolute -bottom-32 right-0 h-80 w-80 rounded-full bg-aqua-600/10 blur-3xl"></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+        <div class="lg:col-span-1">
+          <Logo light />
+          <p class="mt-5 max-w-xs text-sm leading-relaxed text-white/55">
+            Het platform dat vraag en aanbod rond werken, reizen en verblijven in Zeeland samenbrengt tijdens de
+            afsluiting van de Westerscheldetunnel.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-white/40">Platform</h3>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li><a href="/aanbod" class="transition hover:text-white">Bekijk aanbod</a></li>
+            <li><a href="/plaatsen" class="transition hover:text-white">Plaats jouw aanbod</a></li>
+            <li><a href="/community" class="transition hover:text-white">WhatsApp-community</a></li>
+            <li><a href="/over" class="transition hover:text-white">Hoe het werkt</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-white/40">Tunnelafsluiting</h3>
+          <div class="mt-4 rounded-2xl bg-white/[0.04] p-4 ring-1 ring-white/10">
+            <div class="flex items-center gap-2 text-xs text-white/55">
+              <span class="zs-dot h-1.5 w-1.5 rounded-full bg-aqua-400"></span>
+              <span class="font-mono uppercase tracking-wider">Live</span>
+            </div>
+            <p class="mt-2 font-display text-lg font-bold text-white">jan t/m apr 2027</p>
+            <p class="mt-1 text-sm text-white/55">Westerscheldetunnel volledig afgesloten.</p>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-white/40">Beheer</h3>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li>
+              <a href="/beheer" class="inline-flex items-center gap-1.5 transition hover:text-white">
+                <Icon name="shield" size={15} /> Beheeromgeving
+              </a>
+            </li>
+          </ul>
+          <a
+            href="/plaatsen"
+            class="mt-5 inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-white/15 transition hover:bg-white/15"
+          >
+            <Icon name="plus" size={16} stroke={2.2} /> Plaats aanbod
+          </a>
+        </div>
+      </div>
+
+      <div class="mt-14 flex flex-col items-start justify-between gap-3 border-t border-white/10 pt-6 text-xs text-white/45 sm:flex-row sm:items-center">
+        <p>&copy; {year} Zeeland Schakelt. Een platform van Provincie Zeeland, Dockwize en CO3 Campus.</p>
+        <p class="font-mono">Ontwikkeld door Agensea</p>
+      </div>
+    </div>
+  </div>
+</footer>

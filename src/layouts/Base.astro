@@ -1,0 +1,51 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  bare?: boolean;
+}
+
+const {
+  title = 'Zeeland Schakelt',
+  description = 'Het platform dat vraag en aanbod rond werken, reizen en verblijven in Zeeland samenbrengt tijdens de afsluiting van de Westerscheldetunnel.',
+  bare = false,
+} = Astro.props;
+
+const fullTitle = title === 'Zeeland Schakelt' ? title : `${title} — Zeeland Schakelt`;
+---
+
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0b2a43" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="nl_NL" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="flex min-h-screen flex-col">
+    {!bare && <Header />}
+    <main class="flex-1">
+      <slot />
+    </main>
+    {!bare && <Footer />}
+  </body>
+</html>

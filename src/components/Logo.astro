@@ -1,0 +1,35 @@
+---
+interface Props {
+  class?: string;
+  light?: boolean;
+  showTagline?: boolean;
+}
+const { class: cls = '', light = false, showTagline = false } = Astro.props;
+const ink = light ? '#ffffff' : '#0b2436';
+const sub = light ? 'rgba(255,255,255,0.65)' : '#6b8199';
+const gid = light ? 'zsg-l' : 'zsg-d';
+---
+
+<a href="/" class={`group inline-flex items-center gap-2.5 ${cls}`} aria-label="Zeeland Schakelt home">
+  <span class="relative grid h-10 w-10 place-items-center rounded-[13px] shadow-[0_6px_16px_-6px_rgba(11,36,54,0.5)] ring-1 ring-inset ring-white/15 transition-transform duration-300 group-hover:scale-105">
+    <svg viewBox="0 0 40 40" class="absolute inset-0 h-full w-full" aria-hidden="true">
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#114c7f"></stop>
+          <stop offset="1" stop-color="#2479ba"></stop>
+        </linearGradient>
+      </defs>
+      <rect width="40" height="40" rx="13" fill={`url(#${gid})`}></rect>
+      <!-- connectie over het water: twee knooppunten, één verbinding -->
+      <path d="M13.5 14.5 C 15 22, 25 18, 26.5 25.5" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"></path>
+      <circle cx="13.5" cy="14.5" r="3.3" fill="#ffffff"></circle>
+      <circle cx="26.5" cy="25.5" r="3.3" fill="#5fe0d8"></circle>
+    </svg>
+  </span>
+  <span class="flex flex-col leading-none">
+    <span class="font-display text-[17px] font-extrabold tracking-tight" style={`color:${ink}`}>Zeeland Schakelt</span>
+    {showTagline && (
+      <span class="mt-1 font-mono text-[10px] uppercase tracking-[0.18em]" style={`color:${sub}`}>Werken &middot; reizen &middot; verblijven</span>
+    )}
+  </span>
+</a>

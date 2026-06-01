@@ -1,0 +1,118 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+
+const path = Astro.url.pathname;
+const links = [
+  { href: '/aanbod', label: 'Bekijk aanbod' },
+  { href: '/community', label: 'Community' },
+  { href: '/over', label: 'Hoe het werkt' },
+];
+const isActive = (href: string) => path === href || (href !== '/' && path.startsWith(href));
+---
+
+<header class="sticky top-0 z-50 bg-white/75 backdrop-blur-xl">
+  <div class="mx-auto flex h-[68px] max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+    <Logo />
+
+    <!-- segmented nav (desktop) -->
+    <nav class="absolute left-1/2 hidden -translate-x-1/2 items-center gap-0.5 rounded-full bg-ink/[0.045] p-1 ring-1 ring-ink/10 lg:flex" aria-label="Hoofdmenu">
+      {
+        links.map((l) => (
+          <a href={l.href} class="zs-navpill" data-active={isActive(l.href)}>
+            {l.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-2.5">
+      <!-- live tunnel-countdown (tech-accent) -->
+      <span
+        class="hidden items-center gap-2 rounded-full bg-ink/[0.045] px-3 py-1.5 ring-1 ring-ink/10 xl:inline-flex"
+        title="Aftellen tot de sluiting van de Westerscheldetunnel"
+      >
+        <span class="zs-dot h-2 w-2 rounded-full bg-aqua-500"></span>
+        <span class="font-mono text-xs font-medium text-ink-soft">
+          tunnel sluit in <b id="zs-countdown" class="font-semibold text-ink">–</b> dagen
+        </span>
+      </span>
+
+      <a
+        href="/plaatsen"
+        class="hidden items-center gap-1.5 rounded-xl bg-coral-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_8px_22px_-10px_rgba(251,107,73,0.7)] transition hover:bg-coral-600 sm:inline-flex"
+      >
+        <Icon name="plus" size={17} stroke={2.2} />
+        Plaats aanbod
+      </a>
+      <button
+        id="menu-toggle"
+        type="button"
+        class="grid h-10 w-10 place-items-center rounded-xl text-ink ring-1 ring-ink/10 transition hover:bg-sea-50 lg:hidden"
+        aria-label="Menu openen"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <Icon name="menu" size={22} />
+      </button>
+    </div>
+  </div>
+
+  <!-- tech hairline -->
+  <div class="zs-hairline pointer-events-none absolute inset-x-0 bottom-0 h-px"></div>
+
+  <!-- Mobiel menu -->
+  <div id="mobile-menu" class="hidden border-t border-ink/5 bg-white lg:hidden">
+    <nav class="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3" aria-label="Mobiel menu">
+      {
+        links.map((l) => (
+          <a
+            href={l.href}
+            class:list={[
+              'rounded-xl px-3 py-3 text-base font-semibold transition',
+              isActive(l.href) ? 'bg-sea-50 text-sea-700' : 'text-ink-soft hover:bg-sea-50',
+            ]}
+          >
+            {l.label}
+          </a>
+        ))
+      }
+      <a
+        href="/plaatsen"
+        class="mt-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-coral-500 px-4 py-3 text-base font-semibold text-white"
+      >
+        <Icon name="plus" size={18} stroke={2.2} />
+        Plaats jouw aanbod
+      </a>
+      <p class="mt-2 flex items-center gap-2 px-3 font-mono text-xs text-mist">
+        <span class="zs-dot h-1.5 w-1.5 rounded-full bg-aqua-500"></span>
+        tunnel sluit in <b id="zs-countdown-m" class="font-semibold text-ink-soft">–</b> dagen
+      </p>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  toggle?.addEventListener('click', () => {
+    const open = menu?.classList.toggle('hidden') === false;
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Menu sluiten' : 'Menu openen');
+  });
+
+  // subtiele schaduw zodra je scrollt
+  const hdr = document.querySelector('header');
+  const onScroll = () => hdr?.classList.toggle('zs-scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // live aftellen tot sluiting Westerscheldetunnel (1 jan 2027)
+  const target = new Date('2027-01-01T00:00:00').getTime();
+  const days = Math.max(0, Math.ceil((target - Date.now()) / 86400000));
+  const fmt = days.toLocaleString('nl-NL');
+  const cd = document.getElementById('zs-countdown');
+  const cdm = document.getElementById('zs-countdown-m');
+  if (cd) cd.textContent = fmt;
+  if (cdm) cdm.textContent = fmt;
+</script>

@@ -1,0 +1,306 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { CATEGORIES } from '../data/taxonomy';
+import { SEED_LISTINGS } from '../data/listings';
+import { listingCardHTML } from '../lib/cardTemplate';
+
+const totalPlekken = SEED_LISTINGS.length;
+const totalPlaatsen = new Set(SEED_LISTINGS.map((l) => l.town)).size;
+
+const countFor = (id: string) => SEED_LISTINGS.filter((l) => l.category === id).length;
+
+// Diverse selectie uitgelicht aanbod (één per categorie waar mogelijk)
+const featured = (() => {
+  const flagged = SEED_LISTINGS.filter((l) => l.featured);
+  const picks: typeof SEED_LISTINGS = [];
+  const seen = new Set<string>();
+  for (const l of flagged) {
+    if (!seen.has(l.category)) {
+      picks.push(l);
+      seen.add(l.category);
+    }
+  }
+  for (const l of flagged) {
+    if (picks.length >= 3) break;
+    if (!picks.includes(l)) picks.push(l);
+  }
+  return picks.slice(0, 3);
+})();
+
+const steps = [
+  {
+    icon: 'search',
+    title: 'Zoek dichtbij',
+    text: 'Bekijk werkplekken, ruimtes, ritten en overnachtingen op de kaart of in de lijst.',
+  },
+  {
+    icon: 'filter',
+    title: 'Filter & vind',
+    text: 'Filter op plaats, type, prijs en beschikbaarheid en vind precies wat bij jou past.',
+  },
+  {
+    icon: 'route',
+    title: 'Schakel & ga',
+    text: 'Regel je plek of rit direct bij de aanbieder, of plaats je eigen vraag in de community.',
+  },
+];
+---
+
+<Base>
+  <!-- HERO -->
+  <section class="relative isolate overflow-hidden text-white">
+    <div class="absolute inset-0 bg-gradient-to-br from-sea-900 via-sea-800 to-sea-600"></div>
+    <div
+      class="absolute inset-0 bg-cover bg-center"
+      style="background-image:url('/images/zeeland-schakelt/generated/hero-home.png')"
+    >
+    </div>
+    <div class="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/60 to-ink/25"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-ink/40 to-transparent"></div>
+    <div class="pointer-events-none absolute -right-32 -top-32 h-[34rem] w-[34rem] rounded-full bg-aqua-500/15 blur-3xl"></div>
+    <div class="pointer-events-none absolute -bottom-40 left-1/4 h-96 w-96 rounded-full bg-coral-500/10 blur-3xl"></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 pb-44 pt-24 sm:px-6 sm:pt-28 lg:px-8 lg:pb-56 lg:pt-36">
+      <div class="max-w-3xl">
+        <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white/95 ring-1 ring-white/25 backdrop-blur">
+          <Icon name="calendar" size={15} class="text-aqua-400" />
+          Westerscheldetunnel dicht: jan t/m apr 2027
+        </span>
+
+        <h1 class="hero-title mt-7 font-display text-[2.6rem] font-extrabold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl">
+          De tunnel dicht?<br /><span class="text-aqua-300">Zeeland schakelt door.</span>
+        </h1>
+
+        <p class="mt-6 max-w-xl text-lg leading-relaxed text-white/85 sm:text-xl">
+          Vind een werkplek, deelrit of overnachting dicht bij huis. Of bied er zelf een aan. Vraag en aanbod op één
+          plek, plus een community die elkaar verder helpt.
+        </p>
+
+        <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+          <a
+            href="/aanbod"
+            class="zs-btn-light inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-7 py-4 text-base font-bold text-sea-700 transition hover:bg-sea-50"
+          >
+            <Icon name="map" size={19} />
+            Bekijk het aanbod
+          </a>
+          <a
+            href="/plaatsen"
+            class="zs-btn-primary inline-flex items-center justify-center gap-2 rounded-2xl bg-coral-500 px-7 py-4 text-base font-bold text-white ring-1 ring-white/10 transition hover:bg-coral-600"
+          >
+            <Icon name="plus" size={19} stroke={2.2} />
+            Plaats jouw aanbod
+          </a>
+        </div>
+
+        <!-- Snel zoeken -->
+        <form action="/aanbod" method="get" class="mt-10 flex max-w-xl items-center gap-2 rounded-2xl bg-white/95 p-2 shadow-2xl ring-1 ring-white/30">
+          <span class="pl-2.5 text-mist"><Icon name="search" size={20} /></span>
+          <input
+            type="search"
+            name="q"
+            placeholder="Zoek op plaats, type of aanbieder…"
+            class="min-w-0 flex-1 bg-transparent py-2.5 text-ink placeholder:text-mist focus:outline-none"
+          />
+          <button type="submit" class="rounded-xl bg-sea-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-sea-700">
+            Zoek
+          </button>
+        </form>
+
+        <p class="mt-5 flex items-center gap-2 text-sm text-white/70">
+          <Icon name="checkCircle" size={17} class="text-aqua-400" />
+          Geen account nodig. Direct toegang, mobiel en gratis.
+        </p>
+      </div>
+    </div>
+
+    <!-- golf naar wit -->
+    <svg class="absolute bottom-0 left-0 w-full text-shell" viewBox="0 0 1440 120" fill="none" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 60c180 40 360 40 540 16 220-30 420-44 660 4 96 19 168 22 240 14v26H0z" fill="currentColor" />
+    </svg>
+  </section>
+
+  <!-- STATS -->
+  <section class="relative z-10 mx-auto -mt-12 max-w-5xl px-4 sm:-mt-16 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-2 divide-ink/[0.07] rounded-3xl bg-white p-6 shadow-card ring-1 ring-ink/5 sm:grid-cols-4 sm:divide-x sm:p-8">
+      {
+        [
+          { n: `${totalPlekken}`, l: 'plekken & ritten' },
+          { n: `${totalPlaatsen}`, l: 'plaatsen in Zeeland' },
+          { n: '4', l: 'categorieën' },
+          { n: '3', l: 'community-kanalen' },
+        ].map((s) => (
+          <div class="px-2 py-2 text-center sm:px-4">
+            <div class="font-display text-3xl font-extrabold text-sea-700 sm:text-4xl">{s.n}</div>
+            <div class="mt-1.5 text-xs font-medium text-mist sm:text-sm">{s.l}</div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- CATEGORIEËN -->
+  <section class="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:mt-36 lg:px-8">
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <p class="zs-eyebrow">Ontdek</p>
+        <h2 class="mt-3 font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">Wat zoek je?</h2>
+        <p class="mt-3 max-w-md text-mist">Vier soorten aanbod, allemaal dicht bij huis.</p>
+      </div>
+      <a href="/aanbod" class="hidden shrink-0 items-center gap-1 text-sm font-semibold text-sea-600 hover:text-sea-700 sm:inline-flex">
+        Alles bekijken <Icon name="arrowRight" size={16} />
+      </a>
+    </div>
+
+    <div class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-5">
+      {
+        CATEGORIES.map((c) => (
+          <a
+            href={`/aanbod?cat=${c.id}`}
+            class="group relative aspect-[4/5] overflow-hidden rounded-3xl shadow-card ring-1 ring-ink/[0.06] transition duration-300 hover:-translate-y-1 hover:shadow-float"
+            style={`background-color:${c.tint}`}
+          >
+            <span class="absolute inset-0 grid place-items-center opacity-30" style={`color:${c.color}`}>
+              <Icon name={c.icon} size={72} stroke={1} />
+            </span>
+            <img
+              src={c.image}
+              alt={c.label}
+              loading="lazy"
+              onerror="this.remove()"
+              class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+            />
+            <span class="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/25 to-transparent"></span>
+            <div class="absolute inset-x-0 bottom-0 p-4 text-white sm:p-5">
+              <span class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/20 backdrop-blur">
+                <Icon name={c.icon} size={18} />
+              </span>
+              <h3 class="mt-3 font-display text-lg font-bold">{c.short}</h3>
+              <p class="mt-1 flex items-center gap-1 text-sm text-white/85">
+                {countFor(c.id)} beschikbaar
+                <Icon name="arrowRight" size={15} class="transition group-hover:translate-x-0.5" />
+              </p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- HOE HET WERKT -->
+  <section id="hoe-het-werkt" class="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:mt-36 lg:px-8">
+    <div class="rounded-[2rem] bg-foam px-6 py-14 sm:px-12 sm:py-16">
+      <div class="mx-auto max-w-2xl text-center">
+        <p class="zs-eyebrow is-center justify-center">Zo werkt het</p>
+        <h2 class="mt-3 font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">In drie stappen geschakeld</h2>
+        <p class="mt-3 text-ink-soft">Snel, laagdrempelig en zonder gedoe.</p>
+      </div>
+      <div class="mt-12 grid gap-6 md:grid-cols-3">
+        {
+          steps.map((s, i) => (
+            <div class="relative rounded-3xl bg-white p-7 shadow-card ring-1 ring-ink/[0.04]">
+              <span class="absolute -top-3.5 left-7 grid h-8 w-8 place-items-center rounded-full bg-sea-600 text-sm font-bold text-white shadow-sm">
+                {i + 1}
+              </span>
+              <span class="grid h-12 w-12 place-items-center rounded-2xl bg-sea-50 text-sea-600">
+                <Icon name={s.icon} size={22} />
+              </span>
+              <h3 class="mt-5 font-display text-lg font-bold text-ink">{s.title}</h3>
+              <p class="mt-2 text-sm leading-relaxed text-mist">{s.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- UITGELICHT -->
+  <section class="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:mt-36 lg:px-8">
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <p class="zs-eyebrow">Aanbod</p>
+        <h2 class="mt-3 font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">Uitgelicht aanbod</h2>
+        <p class="mt-3 max-w-md text-mist">Een greep uit wat er nu beschikbaar is.</p>
+      </div>
+      <a href="/aanbod" class="hidden shrink-0 items-center gap-1 text-sm font-semibold text-sea-600 hover:text-sea-700 sm:inline-flex">
+        Alle {totalPlekken} bekijken <Icon name="arrowRight" size={16} />
+      </a>
+    </div>
+
+    <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {featured.map((l) => <div set:html={listingCardHTML(l)} />)}
+    </div>
+
+    <div class="mt-9 text-center sm:hidden">
+      <a href="/aanbod" class="inline-flex items-center gap-1.5 rounded-xl bg-sea-600 px-5 py-3 text-sm font-semibold text-white">
+        Bekijk alle {totalPlekken} plekken <Icon name="arrowRight" size={16} />
+      </a>
+    </div>
+  </section>
+
+  <!-- COMMUNITY -->
+  <section class="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:mt-36 lg:px-8">
+    <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-aqua-600 to-sea-700 text-white">
+      <div class="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl"></div>
+      <div class="relative grid items-center gap-10 p-8 sm:p-14 lg:grid-cols-2">
+        <div>
+          <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3.5 py-1.5 text-sm font-medium ring-1 ring-white/20">
+            <Icon name="whatsapp" size={16} /> WhatsApp-community
+          </span>
+          <h2 class="mt-5 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">Samen kom je verder dan alleen</h2>
+          <p class="mt-4 max-w-md text-white/85">
+            Zoek je iets specifieks of wil je je rit delen? In de community vinden vraag en aanbod elkaar razendsnel.
+            Doe mee in het kanaal dat bij je past.
+          </p>
+          <a
+            href="/community"
+            class="mt-7 inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-bold text-aqua-700 shadow-lg transition hover:bg-aqua-50"
+          >
+            <Icon name="whatsapp" size={18} /> Naar de community
+          </a>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-3">
+          {
+            [
+              { icon: 'desk', label: 'Werken' },
+              { icon: 'bed', label: 'Overnachten' },
+              { icon: 'car', label: 'Carpoolen' },
+            ].map((k) => (
+              <div class="rounded-2xl bg-white/10 p-6 text-center ring-1 ring-white/15 backdrop-blur transition hover:bg-white/15">
+                <span class="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-white/15">
+                  <Icon name={k.icon} size={24} />
+                </span>
+                <div class="mt-3 font-display font-bold">{k.label}</div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VOOR AANBIEDERS -->
+  <section class="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:mt-36 lg:px-8">
+    <div class="flex flex-col items-center justify-between gap-7 rounded-[2rem] border border-ink/[0.08] bg-white p-8 text-center shadow-card sm:p-14 lg:flex-row lg:text-left">
+      <div class="max-w-xl">
+        <span class="inline-flex items-center gap-2 rounded-full bg-coral-500/10 px-3.5 py-1.5 text-sm font-semibold text-coral-600">
+          <Icon name="hand" size={16} /> Voor aanbieders
+        </span>
+        <h2 class="mt-4 font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
+          Heb je iets aan te bieden?
+        </h2>
+        <p class="mt-3 text-mist">
+          Plaats je werkplek, ruimte of rit gratis en help forenzen in de regio. In een paar minuten geregeld, geen
+          account nodig.
+        </p>
+      </div>
+      <a
+        href="/plaatsen"
+        class="zs-btn-primary inline-flex shrink-0 items-center gap-2 rounded-2xl bg-coral-500 px-7 py-4 text-base font-bold text-white transition hover:bg-coral-600"
+      >
+        <Icon name="plus" size={20} stroke={2.2} /> Plaats jouw aanbod
+      </a>
+    </div>
+  </section>
+</Base>

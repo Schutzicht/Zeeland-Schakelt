@@ -1,0 +1,284 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { CATEGORIES, AMENITIES, REGION_LABEL } from '../data/taxonomy';
+import { TOWNS } from '../data/towns';
+
+const townsNoord = TOWNS.filter((t) => t.region === 'noord');
+const townsZuid = TOWNS.filter((t) => t.region === 'zuid');
+---
+
+<Base
+  title="Plaats jouw aanbod"
+  description="Bied gratis een werkplek, ruimte, rit of overnachting aan en help forenzen in Zeeland tijdens de tunnelafsluiting."
+>
+  <div class="mx-auto max-w-3xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8">
+    <div id="zs-form-wrap">
+      <div class="text-center">
+        <span class="inline-flex items-center gap-2 rounded-full bg-coral-500/10 px-3 py-1 text-sm font-semibold text-coral-600">
+          <Icon name="hand" size={16} /> Voor aanbieders
+        </span>
+        <h1 class="mt-3 font-display text-3xl font-extrabold text-ink sm:text-4xl">Plaats jouw aanbod</h1>
+        <p class="mx-auto mt-2 max-w-xl text-mist">
+          Werkplek, vergaderruimte, deelrit of overnachting? Zet het hier neer en help mensen in de regio. Gratis en
+          zonder account, in een paar minuten geregeld.
+        </p>
+      </div>
+
+      <form id="zs-form" class="mt-8 space-y-7" novalidate>
+        <!-- Type -->
+        <fieldset class="rounded-2xl bg-white p-5 shadow-card ring-1 ring-ink/5 sm:p-6">
+          <legend class="px-1 font-display text-base font-bold text-ink">1. Wat bied je aan?</legend>
+          <div class="mt-3 grid gap-3 sm:grid-cols-2">
+            {
+              CATEGORIES.map((c, i) => (
+                <label class="zs-cat-option flex cursor-pointer items-start gap-3 rounded-xl border border-ink/15 p-3.5 transition hover:border-sea-300">
+                  <input type="radio" name="category" value={c.id} class="peer sr-only" checked={i === 0} />
+                  <span class="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg" style={`background:${c.tint};color:${c.color}`}>
+                    <Icon name={c.icon} size={20} />
+                  </span>
+                  <span>
+                    <span class="block font-semibold text-ink">{c.short}</span>
+                    <span class="block text-xs text-mist">{c.blurb}</span>
+                  </span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <!-- Details -->
+        <fieldset class="rounded-2xl bg-white p-5 shadow-card ring-1 ring-ink/5 sm:p-6">
+          <legend class="px-1 font-display text-base font-bold text-ink">2. Details</legend>
+          <div class="mt-3 grid gap-4">
+            <div>
+              <label for="zs-title" class="zs-label">Titel van het aanbod <span class="text-coral-500">*</span></label>
+              <input id="zs-title" name="title" type="text" class="zs-input" placeholder="Bijv. Flexplekken in het centrum" />
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label for="zs-provider" class="zs-label">Aanbieder / organisatie <span class="text-coral-500">*</span></label>
+                <input id="zs-provider" name="provider" type="text" class="zs-input" placeholder="Naam van je bedrijf of locatie" />
+              </div>
+              <div>
+                <label for="zs-town" class="zs-label">Plaats <span class="text-coral-500">*</span></label>
+                <select id="zs-town" name="town" class="zs-input">
+                  <option value="">Kies een plaats…</option>
+                  <optgroup label={REGION_LABEL.noord}>
+                    {townsNoord.map((t) => <option value={t.name}>{t.name}</option>)}
+                  </optgroup>
+                  <optgroup label={REGION_LABEL.zuid}>
+                    {townsZuid.map((t) => <option value={t.name}>{t.name}</option>)}
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label for="zs-address" class="zs-label">Adres <span class="text-mist">(optioneel)</span></label>
+              <input id="zs-address" name="address" type="text" class="zs-input" placeholder="Straat en huisnummer" />
+            </div>
+            <div>
+              <label for="zs-desc" class="zs-label">Omschrijving <span class="text-coral-500">*</span></label>
+              <textarea id="zs-desc" name="description" rows="4" class="zs-input" placeholder="Vertel kort wat je aanbiedt, voor wie en wat handig is om te weten."></textarea>
+            </div>
+            <div>
+              <label for="zs-capacity" class="zs-label">Aantal plekken <span class="text-mist">(optioneel)</span></label>
+              <input id="zs-capacity" name="capacity" type="number" min="1" class="zs-input sm:max-w-[12rem]" placeholder="Bijv. 20" />
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Prijs & beschikbaarheid -->
+        <fieldset class="rounded-2xl bg-white p-5 shadow-card ring-1 ring-ink/5 sm:p-6">
+          <legend class="px-1 font-display text-base font-bold text-ink">3. Prijs & beschikbaarheid</legend>
+
+          <div class="mt-3">
+            <span class="zs-label">Prijs</span>
+            <div class="mt-1 flex flex-wrap gap-2">
+              <label class="zs-pill">
+                <input type="radio" name="pricetype" value="gratis" class="peer sr-only" checked />
+                <span class="zs-pill-label">Gratis</span>
+              </label>
+              <label class="zs-pill">
+                <input type="radio" name="pricetype" value="betaald" class="peer sr-only" />
+                <span class="zs-pill-label">Betaald</span>
+              </label>
+            </div>
+
+            <div id="zs-price-fields" class="mt-3 hidden flex-wrap items-end gap-3">
+              <div>
+                <label for="zs-per" class="zs-label">Per</label>
+                <select id="zs-per" name="per" class="zs-input">
+                  <option value="dag">per dag</option>
+                  <option value="dagdeel">per dagdeel</option>
+                  <option value="nacht">per nacht</option>
+                  <option value="rit">per rit</option>
+                  <option value="maand">per maand</option>
+                  <option value="aanvraag">Op aanvraag</option>
+                </select>
+              </div>
+              <div id="zs-amount-field">
+                <label for="zs-amount" class="zs-label">Bedrag (€)</label>
+                <input id="zs-amount" name="amount" type="number" min="0" step="0.5" class="zs-input sm:max-w-[10rem]" placeholder="15" />
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <span class="zs-label">Beschikbaarheid</span>
+            <div class="mt-1 flex flex-wrap gap-2">
+              <label class="zs-pill">
+                <input type="radio" name="availtype" value="direct" class="peer sr-only" checked />
+                <span class="zs-pill-label">Direct beschikbaar</span>
+              </label>
+              <label class="zs-pill">
+                <input type="radio" name="availtype" value="datum" class="peer sr-only" />
+                <span class="zs-pill-label">Vanaf een datum</span>
+              </label>
+            </div>
+            <div id="zs-date-field" class="mt-3 hidden">
+              <label for="zs-date" class="zs-label">Beschikbaar vanaf</label>
+              <input id="zs-date" name="date" type="date" class="zs-input sm:max-w-[14rem]" />
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Voorzieningen -->
+        <fieldset class="rounded-2xl bg-white p-5 shadow-card ring-1 ring-ink/5 sm:p-6">
+          <legend class="px-1 font-display text-base font-bold text-ink">4. Voorzieningen <span class="font-normal text-mist">(optioneel)</span></legend>
+          <div class="mt-3 flex flex-wrap gap-2">
+            {
+              AMENITIES.map((a) => (
+                <label class="zs-pill">
+                  <input type="checkbox" name="amenity" value={a} class="peer sr-only" />
+                  <span class="zs-pill-label">{a}</span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <!-- Contact -->
+        <fieldset class="rounded-2xl bg-white p-5 shadow-card ring-1 ring-ink/5 sm:p-6">
+          <legend class="px-1 font-display text-base font-bold text-ink">5. Contact</legend>
+          <p class="mt-1 text-sm text-mist">Vul minimaal één manier in waarop mensen je kunnen bereiken.</p>
+          <div class="mt-3 grid gap-4 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label for="zs-website" class="zs-label">Website / landingspagina</label>
+              <input id="zs-website" name="website" type="url" class="zs-input" placeholder="https://…" />
+            </div>
+            <div>
+              <label for="zs-email" class="zs-label">E-mail</label>
+              <input id="zs-email" name="email" type="email" class="zs-input" placeholder="naam@voorbeeld.nl" />
+            </div>
+            <div>
+              <label for="zs-phone" class="zs-label">Telefoon</label>
+              <input id="zs-phone" name="phone" type="tel" class="zs-input" placeholder="06 …" />
+            </div>
+          </div>
+        </fieldset>
+
+        <div id="zs-error" class="hidden rounded-xl border border-coral-500/30 bg-coral-500/10 px-4 py-3 text-sm font-medium text-coral-600"></div>
+
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <p class="flex items-center gap-2 text-sm text-mist">
+            <Icon name="shieldCheck" size={18} class="text-aqua-600" />
+            We controleren je aanbod kort voordat het zichtbaar wordt.
+          </p>
+          <button
+            type="submit"
+            class="inline-flex items-center justify-center gap-2 rounded-xl bg-coral-500 px-6 py-3.5 text-base font-bold text-white shadow-lg transition hover:bg-coral-600"
+          >
+            <Icon name="check" size={19} stroke={2.4} /> Aanbod plaatsen
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Succes -->
+    <div id="zs-success" class="hidden">
+      <div class="rounded-3xl bg-white p-8 text-center shadow-card ring-1 ring-ink/5 sm:p-12">
+        <span class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-aqua-500/15 text-aqua-600">
+          <Icon name="checkCircle" size={36} />
+        </span>
+        <h1 class="mt-4 font-display text-2xl font-extrabold text-ink">Bedankt, je aanbod staat klaar!</h1>
+        <p class="mx-auto mt-2 max-w-md text-mist">
+          Je aanbod is ingediend en staat in de wachtrij. Zodra het is gecontroleerd, verschijnt het op de kaart en in
+          de lijst voor heel Zeeland.
+        </p>
+        <div id="zs-success-summary" class="mx-auto mt-6 max-w-sm"></div>
+        <div class="mt-7 flex flex-wrap justify-center gap-3">
+          <a href="/aanbod" class="rounded-xl bg-sea-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sea-700">
+            Naar het aanbod
+          </a>
+          <button id="zs-again" type="button" class="rounded-xl border border-ink/15 px-5 py-3 text-sm font-semibold text-ink-soft transition hover:bg-sea-50">
+            Nog een aanbod plaatsen
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .zs-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin-bottom: 0.35rem;
+  }
+  .zs-input {
+    width: 100%;
+    border-radius: 0.75rem;
+    border: 1px solid rgb(11 42 67 / 0.14);
+    background: var(--color-shell);
+    padding: 0.65rem 0.85rem;
+    font-size: 0.95rem;
+    color: var(--color-ink);
+    transition: border-color 0.15s;
+  }
+  .zs-input::placeholder { color: var(--color-mist); }
+  .zs-input:focus {
+    outline: none;
+    border-color: var(--color-sea-400);
+    background: #fff;
+  }
+  textarea.zs-input { resize: vertical; }
+
+  /* radio-kaart voor categorie */
+  .zs-cat-option:has(input:checked) {
+    border-color: var(--color-sea-500);
+    background: var(--color-sea-50);
+    box-shadow: 0 0 0 1px var(--color-sea-500);
+  }
+
+  /* pill voor radio/checkbox */
+  .zs-pill { cursor: pointer; }
+  .zs-pill-label {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    border: 1px solid rgb(11 42 67 / 0.14);
+    background: #fff;
+    padding: 0.45rem 0.95rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+    transition: all 0.15s;
+  }
+  .zs-pill-label:hover { border-color: var(--color-sea-300); }
+  .zs-pill input:checked + .zs-pill-label {
+    background: var(--color-sea-600);
+    border-color: var(--color-sea-600);
+    color: #fff;
+  }
+  .zs-pill input:focus-visible + .zs-pill-label {
+    outline: 2px solid var(--color-sea-500);
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  import '../scripts/plaatsen';
+</script>

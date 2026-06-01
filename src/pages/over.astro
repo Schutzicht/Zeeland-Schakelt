@@ -1,0 +1,136 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+
+const audiences = [
+  {
+    icon: 'users',
+    title: 'Forenzen & werknemers',
+    text: 'Dagelijks afhankelijk van de tunnel? Vind een werkplek, deelrit of overnachting dicht bij huis.',
+  },
+  {
+    icon: 'building',
+    title: 'Ondernemers & organisaties',
+    text: 'Heb je flexplekken, ruimtes, accommodatie of een mobiliteitsoplossing? Bied het aan en help de regio.',
+  },
+  {
+    icon: 'route',
+    title: 'Netwerken & partners',
+    text: 'Verspreid het platform binnen je achterban en activeer je netwerk om mee te doen.',
+  },
+];
+
+const principles = [
+  { icon: 'sparkle', title: 'Eenvoud', text: 'Alles op één plek, overzichtelijk en zonder gedoe.' },
+  { icon: 'clock', title: 'Snelheid', text: 'Geen account nodig, direct toegang. Mobiel als eerste.' },
+  { icon: 'hand', title: 'Deelname', text: 'De kracht zit in mensen zelf. Vraag en aanbod, samen.' },
+];
+---
+
+<Base
+  title="Hoe het werkt"
+  description="Zeeland Schakelt is meer dan een website: een ecosysteem van platform en community dat vraag en aanbod rond werken, reizen en verblijven samenbrengt."
+>
+  <section class="mx-auto max-w-4xl px-4 pb-4 pt-20 sm:px-6 sm:pt-28 lg:px-8">
+    <span class="inline-flex items-center gap-2 rounded-full bg-sea-50 px-3.5 py-1.5 text-sm font-semibold text-sea-700">
+      <Icon name="info" size={16} /> Over het platform
+    </span>
+    <h1 class="mt-5 font-display text-4xl font-extrabold leading-tight tracking-tight text-ink sm:text-5xl">
+      Geen statische website, maar een ecosysteem
+    </h1>
+    <p class="mt-4 max-w-2xl text-lg leading-relaxed text-ink-soft">
+      Van januari tot en met april 2027 is de Westerscheldetunnel afgesloten. Dat raakt het dagelijkse woon-werkverkeer
+      in heel Zeeland. Zeeland Schakelt brengt vraag en aanbod rond werken, mobiliteit en verblijf samen, zodat mensen
+      makkelijk een alternatief vinden, dicht bij huis.
+    </p>
+  </section>
+
+  <!-- Voor wie -->
+  <section class="mx-auto mt-14 max-w-5xl px-4 sm:mt-16 sm:px-6 lg:px-8">
+    <h2 class="font-display text-3xl font-extrabold tracking-tight text-ink">Voor wie?</h2>
+    <div class="mt-6 grid gap-5 md:grid-cols-3">
+      {
+        audiences.map((a) => (
+          <div class="rounded-2xl bg-white p-6 shadow-card ring-1 ring-ink/5">
+            <span class="grid h-11 w-11 place-items-center rounded-xl bg-sea-50 text-sea-600">
+              <Icon name={a.icon} size={22} />
+            </span>
+            <h3 class="mt-4 font-display text-lg font-bold text-ink">{a.title}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-mist">{a.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Stappen -->
+  <section class="mx-auto mt-20 max-w-5xl px-4 sm:mt-24 sm:px-6 lg:px-8">
+    <div class="rounded-[2rem] bg-foam px-6 py-14 sm:px-12 sm:py-16">
+      <h2 class="font-display text-3xl font-extrabold tracking-tight text-ink">Zo werkt het</h2>
+      <div class="mt-8 grid gap-6 md:grid-cols-2">
+        <div class="flex gap-4">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sea-600 font-bold text-white">1</span>
+          <div>
+            <h3 class="font-display font-bold text-ink">Bekijk het aanbod</h3>
+            <p class="mt-1 text-sm text-mist">Op de kaart of in de lijst zie je werkplekken, ruimtes, ritten en overnachtingen door heel Zeeland.</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sea-600 font-bold text-white">2</span>
+          <div>
+            <h3 class="font-display font-bold text-ink">Filter op wat past</h3>
+            <p class="mt-1 text-sm text-mist">Verfijn op plaats, type, prijs, beschikbaarheid en de kant van de tunnel.</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-sea-600 font-bold text-white">3</span>
+          <div>
+            <h3 class="font-display font-bold text-ink">Regel het direct</h3>
+            <p class="mt-1 text-sm text-mist">Ga naar de aanbieder via de link, mail of bel. Of plan meteen je route.</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-aqua-500 font-bold text-white">4</span>
+          <div>
+            <h3 class="font-display font-bold text-ink">Doe mee in de community</h3>
+            <p class="mt-1 text-sm text-mist">Zoek je iets specifieks of wil je je rit delen? In de WhatsApp-community vind je elkaar.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Uitgangspunten -->
+  <section class="mx-auto mt-20 max-w-5xl px-4 sm:mt-24 sm:px-6 lg:px-8">
+    <h2 class="font-display text-3xl font-extrabold tracking-tight text-ink">Waar we in geloven</h2>
+    <div class="mt-6 grid gap-5 sm:grid-cols-3">
+      {
+        principles.map((p) => (
+          <div class="rounded-2xl border border-ink/10 bg-white p-6 text-center shadow-card">
+            <span class="mx-auto grid h-12 w-12 place-items-center rounded-xl bg-aqua-500/12 text-aqua-600">
+              <Icon name={p.icon} size={24} />
+            </span>
+            <h3 class="mt-4 font-display text-lg font-bold text-ink">{p.title}</h3>
+            <p class="mt-1.5 text-sm text-mist">{p.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="mx-auto mt-20 max-w-5xl px-4 pb-4 sm:mt-24 sm:px-6 lg:px-8">
+    <div class="flex flex-col items-center gap-4 rounded-[2rem] bg-gradient-to-br from-sea-700 to-sea-600 p-10 text-center text-white sm:p-14">
+      <h2 class="font-display text-2xl font-extrabold sm:text-3xl">Klaar om te schakelen?</h2>
+      <p class="max-w-md text-white/85">Bekijk het aanbod of plaats er zelf een. Samen houden we Zeeland in beweging.</p>
+      <div class="mt-2 flex flex-col gap-3 sm:flex-row">
+        <a href="/aanbod" class="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-sea-700 transition hover:bg-sea-50">
+          <Icon name="map" size={18} /> Bekijk het aanbod
+        </a>
+        <a href="/plaatsen" class="inline-flex items-center justify-center gap-2 rounded-xl bg-coral-500 px-6 py-3 text-sm font-bold text-white transition hover:bg-coral-600">
+          <Icon name="plus" size={18} stroke={2.2} /> Plaats jouw aanbod
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
