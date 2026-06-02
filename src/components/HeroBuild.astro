@@ -107,10 +107,11 @@ const milestones = [
   <!-- opbouwende file achter de werkzaamheden -->
   <div class="zs-queue pointer-events-none absolute inset-0">
     {
-      Array.from({ length: 14 }).map(() => (
+      Array.from({ length: 20 }).map(() => (
         <div class="zs-qcar absolute" style="opacity:0;left:0;bottom:0">
           <span class="zs-smoke"></span>
-          <svg width="26" height="15" viewBox="0 0 40 22" fill="none" aria-hidden="true">
+          <span class="zs-smoke zs-smoke-b"></span>
+          <svg width="40" height="22" viewBox="0 0 40 22" fill="none" aria-hidden="true">
             <path d="M3 14l3-7a3 3 0 0 1 2.7-1.7h14.6A3 3 0 0 1 28 6l4 4 5 1a2 2 0 0 1 2 2v3H3z" fill="currentColor"></path>
             <path d="M9 7h8v4H7z" fill="#bfe3ff" opacity="0.85"></path>
             <circle cx="12" cy="17" r="3" fill="#0b2436"></circle>
@@ -220,12 +221,10 @@ const milestones = [
   .zs-qcar:nth-child(3n) svg { animation-delay: 0.2s; }
   .zs-qcar:nth-child(3n + 1) svg { animation-delay: 0.55s; }
   .zs-qcar:nth-child(3n + 2) svg { animation-delay: 0.85s; }
-  .zs-smoke { position: absolute; left: -2px; bottom: 3px; width: 5px; height: 5px; border-radius: 9999px; background: #5b6b7a; opacity: 0; animation: zs-smoke 1.8s ease-out infinite; }
-  .zs-qcar:nth-child(3n) .zs-smoke { animation-delay: 0.3s; }
-  .zs-qcar:nth-child(3n + 1) .zs-smoke { animation-delay: 0.9s; }
-  .zs-qcar:nth-child(3n + 2) .zs-smoke { animation-delay: 1.3s; }
+  .zs-smoke { position: absolute; left: -3px; bottom: 4px; width: 9px; height: 9px; border-radius: 9999px; background: #6b7785; opacity: 0; animation: zs-smoke 1.7s ease-out infinite; }
+  .zs-smoke-b { left: 1px; bottom: 7px; width: 6px; height: 6px; animation-duration: 2.2s; }
   @keyframes zs-idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1px); } }
-  @keyframes zs-smoke { 0% { opacity: 0; transform: translate(0, 0) scale(0.4); } 25% { opacity: 0.32; } 100% { opacity: 0; transform: translate(-9px, -13px) scale(1.6); } }
+  @keyframes zs-smoke { 0% { opacity: 0; transform: translate(0, 0) scale(0.4); } 22% { opacity: 0.42; } 100% { opacity: 0; transform: translate(-13px, -18px) scale(2); } }
 
   @media (prefers-reduced-motion: reduce) {
     .zs-worker-bob, .zs-worker .zs-arm, .zs-worker .zs-spark, .zs-worker .zs-chip, .zs-dust span, .zs-crane .zs-hook, .zs-qcar svg, .zs-smoke { animation: none; }
@@ -263,9 +262,14 @@ const milestones = [
   const reopen = document.querySelector<HTMLElement>('.zs-reopen');
   const confetti = document.querySelector<HTMLElement>('.zs-confetti');
   const qcars = Array.from(document.querySelectorAll<HTMLElement>('.zs-qcar'));
-  const QCOLORS = ['#e9522f', '#2479ba', '#5b6b7a', '#f6b73c', '#76828e', '#2ed3c9', '#0c9290'];
-  qcars.forEach((c, i) => (c.style.color = QCOLORS[i % QCOLORS.length]));
-  const QSP = 0.028;
+  const QCOLORS = ['#e9522f', '#2479ba', '#5b6b7a', '#f6b73c', '#76828e', '#2ed3c9', '#0c9290', '#114c7f'];
+  qcars.forEach((c, i) => {
+    c.style.color = QCOLORS[i % QCOLORS.length];
+    c.querySelectorAll<HTMLElement>('.zs-smoke').forEach((s) => {
+      s.style.animationDelay = (Math.random() * 2.2).toFixed(2) + 's';
+    });
+  });
+  const QSP = 0.032;
   const len = built ? built.getTotalLength() : 0;
 
   const ptAt = (frac: number) => built!.getPointAtLength(len * clamp(frac));
