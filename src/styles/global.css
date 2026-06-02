@@ -171,8 +171,8 @@ header.zs-scrolled { box-shadow: 0 8px 28px -16px rgba(11, 42, 67, 0.4); }
 
 /* ---- vloeiende display-typografie (clamp) ---- */
 .zs-h1 {
-  font-size: clamp(2.55rem, 6vw, 4.75rem);
-  line-height: 1.03;
+  font-size: clamp(2.25rem, 4.6vw, 3.9rem);
+  line-height: 1.05;
   letter-spacing: -0.025em;
 }
 .zs-h2 {

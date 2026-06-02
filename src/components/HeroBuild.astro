@@ -2,7 +2,7 @@
 // Hero-onderkant = tunnel-bouwtijdlijn die de golf-curve volgt (1 jan - 1 mei 2027).
 // De golf IS de tunnelroute: gebouwd deel (gradient) vult achter een meelopende
 // bouwvakker die de curve volgt; gepland deel lichtblauw; overkant licht aqua op.
-const CREST = 'M0 72 C 320 38, 560 42, 760 66 S 1180 104, 1440 66';
+const CREST = 'M0 62 C 320 33, 560 36, 760 57 S 1180 90, 1440 57';
 const months = [
   { label: 'jan', left: 2 },
   { label: 'feb', left: 26.5 },
@@ -12,10 +12,10 @@ const months = [
 ];
 ---
 
-<div class="zs-build pointer-events-none absolute inset-x-0 bottom-0 h-[150px]">
+<div class="zs-build pointer-events-none absolute inset-x-0 bottom-0 h-[130px]">
   <svg
-    class="zs-build-svg absolute bottom-0 left-0 h-[150px] w-full"
-    viewBox="0 0 1440 150"
+    class="zs-build-svg absolute bottom-0 left-0 h-[130px] w-full"
+    viewBox="0 0 1440 130"
     fill="none"
     preserveAspectRatio="none"
     aria-hidden="true"
@@ -29,7 +29,7 @@ const months = [
       </linearGradient>
     </defs>
     <!-- crème vlak onder de golf -->
-    <path d={`${CREST} L1440 150 L0 150 Z`} fill="#f6f1e6"></path>
+    <path d={`${CREST} L1440 130 L0 130 Z`} fill="#f6f1e6"></path>
     <!-- geplande route -->
     <path d={CREST} stroke="#bcd7ee" stroke-width="20" stroke-linecap="round"></path>
     <!-- gebouwd deel -->
@@ -52,7 +52,7 @@ const months = [
   <!-- maand-labels -->
   {
     months.map((m) => (
-      <span class="absolute font-mono text-[11px] font-semibold text-mist" style={`left:${m.left}%;bottom:22px;transform:translateX(-50%)`}>
+      <span class="absolute font-mono text-[11px] font-semibold text-mist" style={`left:${m.left}%;bottom:16px;transform:translateX(-50%)`}>
         {m.label}
       </span>
     ))
@@ -159,7 +159,7 @@ const months = [
   const shoreStart = document.querySelector<HTMLElement>('.zs-shore-start');
   const shoreEnd = document.querySelector<HTMLElement>('.zs-shore-end');
   const VBW = 1440;
-  const VBH = 150;
+  const VBH = 130;
   const len = built ? built.getTotalLength() : 0;
 
   const placeOnCurve = (el: HTMLElement | null, frac: number, footOffset = 4) => {

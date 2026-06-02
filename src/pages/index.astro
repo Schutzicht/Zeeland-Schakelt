@@ -80,7 +80,7 @@ const features = [
 
 <Base>
   <!-- HERO -->
-  <section class="relative isolate overflow-hidden text-white">
+  <section class="relative isolate flex h-[92dvh] max-h-[840px] min-h-[560px] flex-col overflow-hidden text-white">
     <div class="absolute inset-0 bg-gradient-to-br from-sea-900 via-sea-800 to-sea-600"></div>
     <div
       class="absolute inset-0 bg-cover bg-center"
@@ -92,23 +92,23 @@ const features = [
     <div class="pointer-events-none absolute -right-32 -top-32 h-[34rem] w-[34rem] rounded-full bg-aqua-500/15 blur-3xl"></div>
     <div class="pointer-events-none absolute -bottom-40 left-1/4 h-96 w-96 rounded-full bg-coral-500/10 blur-3xl"></div>
 
-    <div class="relative mx-auto w-full max-w-7xl px-4 pb-44 pt-20 sm:px-6 sm:pt-24 lg:px-8 lg:pt-28">
+    <div class="relative z-[1] mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-4 pb-[140px] pt-16 sm:px-6 lg:px-8">
       <div class="max-w-3xl">
         <span data-reveal class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white/95 ring-1 ring-white/25 backdrop-blur">
           <Icon name="calendar" size={15} class="text-aqua-400" />
           Westerscheldetunnel dicht: jan t/m apr 2027
         </span>
 
-        <h1 data-reveal style="--d:1" class="hero-title zs-h1 mt-7 font-display font-extrabold">
+        <h1 data-reveal style="--d:1" class="hero-title zs-h1 mt-5 font-display font-extrabold">
           De tunnel dicht?<br /><span class="text-aqua-300">Zeeland schakelt door.</span>
         </h1>
 
-        <p data-reveal style="--d:2" class="zs-lead mt-6 max-w-xl text-white/85">
+        <p data-reveal style="--d:2" class="zs-lead mt-4 max-w-xl text-white/85">
           Vind een werkplek, deelrit of overnachting dicht bij huis. Of bied er zelf een aan. Vraag en aanbod op één
           plek, plus een community die elkaar verder helpt.
         </p>
 
-        <div data-reveal style="--d:3" class="mt-9 flex flex-col gap-3 sm:flex-row">
+        <div data-reveal style="--d:3" class="mt-7 flex flex-col gap-3 sm:flex-row">
           <a
             href="/aanbod"
             class="zs-btn-light inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-7 py-4 text-base font-bold text-sea-700 transition hover:bg-sea-50"
@@ -126,7 +126,7 @@ const features = [
         </div>
 
         <!-- Snel zoeken -->
-        <form data-reveal style="--d:4" action="/aanbod" method="get" class="mt-10 flex max-w-xl items-center gap-2 rounded-2xl bg-white/95 p-2 shadow-2xl ring-1 ring-white/30">
+        <form data-reveal style="--d:4" action="/aanbod" method="get" class="mt-7 flex max-w-xl items-center gap-2 rounded-2xl bg-white/95 p-2 shadow-2xl ring-1 ring-white/30">
           <span class="pl-2.5 text-mist"><Icon name="search" size={20} /></span>
           <input
             type="search"
@@ -139,7 +139,7 @@ const features = [
           </button>
         </form>
 
-        <p data-reveal style="--d:5" class="mt-5 flex items-center gap-2 text-sm text-white/70">
+        <p data-reveal style="--d:4" class="mt-4 flex items-center gap-2 text-sm text-white/70">
           <Icon name="checkCircle" size={17} class="text-aqua-400" />
           Geen account nodig. Direct toegang, mobiel en gratis.
         </p>
