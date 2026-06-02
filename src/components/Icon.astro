@@ -4,11 +4,11 @@ import { ICONS } from '../lib/icons';
 interface Props {
   name: string;
   size?: number;
-  stroke?: number;
+  stroke?: number; // genegeerd (Phosphor-gewicht zit in het icoon)
   class?: string;
 }
 
-const { name, size = 24, stroke = 1.7, class: cls = '' } = Astro.props;
+const { name, size = 24, class: cls = '' } = Astro.props;
 const inner = ICONS[name] ?? '';
 ---
 
@@ -16,12 +16,8 @@ const inner = ICONS[name] ?? '';
   xmlns="http://www.w3.org/2000/svg"
   width={size}
   height={size}
-  viewBox="0 0 24 24"
-  fill="none"
-  stroke="currentColor"
-  stroke-width={stroke}
-  stroke-linecap="round"
-  stroke-linejoin="round"
+  viewBox="0 0 256 256"
+  fill="currentColor"
   class={cls}
   aria-hidden="true"
   set:html={inner}
