@@ -8,17 +8,119 @@ const gid = 'zsmark-' + Math.random().toString(36).slice(2, 9);
 
 <a href="/" class={`group inline-flex items-center gap-2.5 ${cls}`} aria-label="Zeeland Schakelt home">
   <span class="grid h-9 w-9 shrink-0 place-items-center transition-transform duration-300 group-hover:scale-110">
-    <svg width="34" height="34" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+    <svg class="zs-logo-mark" width="34" height="34" viewBox="0 0 36 36" fill="none" aria-hidden="true">
       <defs>
         <linearGradient id={gid} x1="6" y1="10" x2="30" y2="28" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#2479ba"></stop>
+          <stop offset="0" stop-color="#155f9c"></stop>
           <stop offset="1" stop-color="#2ed3c9"></stop>
         </linearGradient>
       </defs>
-      <path d={`M12 12.5 C 13.6 21, 22.4 17, 24 24.5`} stroke={`url(#${gid})`} stroke-width="3.4" stroke-linecap="round"></path>
-      <circle cx="12" cy="12.5" r="3.7" fill="#155f9c"></circle>
-      <circle cx="24" cy="24.5" r="3.7" fill="#fb6b49"></circle>
+      <!-- geplande verbinding (ghost) -->
+      <path d="M12 12.5 C 13.6 21, 22.4 17, 24 24.5" stroke="#0b2436" stroke-opacity="0.13" stroke-width="3.4" stroke-linecap="round"></path>
+      <!-- herstelde verbinding (vult naarmate werkzaamheden vorderen) -->
+      <path
+        class="zs-link"
+        d="M12 12.5 C 13.6 21, 22.4 17, 24 24.5"
+        stroke={`url(#${gid})`}
+        stroke-width="3.4"
+        stroke-linecap="round"
+        pathLength="100"
+        stroke-dasharray="100"
+        stroke-dashoffset="0"
+      ></path>
+      <!-- vaste oever -->
+      <circle cx="12" cy="12.5" r="3.6" fill="#155f9c"></circle>
+      <!-- overkant (licht aqua op bij heropening) -->
+      <circle class="zs-link-end" cx="24" cy="24.5" r="3.6" fill="#fb6b49"></circle>
+      <!-- werkzaamheden-marker -->
+      <circle class="zs-link-dot" cx="12" cy="12.5" r="2.1" fill="#fb6b49" stroke="#fff" stroke-width="1.1" opacity="0"></circle>
     </svg>
   </span>
   <span class="font-display text-[17px] font-extrabold tracking-tight text-ink">Zeeland Schakelt</span>
 </a>
+
+<script>
+  const CLOSE_START = new Date('2027-01-01T00:00:00').getTime();
+  const CLOSE_END = new Date('2027-05-01T00:00:00').getTime();
+  const AQUA = '#2ed3c9';
+  const CORAL = '#fb6b49';
+
+  const now = Date.now();
+  const total = CLOSE_END - CLOSE_START;
+  let p = Math.max(0, Math.min(1, (now - CLOSE_START) / total));
+  let phase: 'before' | 'during' | 'after' =
+    now < CLOSE_START ? 'before' : now > CLOSE_END ? 'after' : 'during';
+
+  // demo-override om elke voortgang te tonen tijdens een pitch: ?tunnel=0.5
+  const ov = new URLSearchParams(window.location.search).get('tunnel');
+  if (ov !== null) {
+    const v = parseFloat(ov);
+    if (!Number.isNaN(v)) {
+      p = Math.max(0, Math.min(1, v));
+      phase = p >= 1 ? 'after' : p <= 0 ? 'before' : 'during';
+    }
+  }
+
+  const daysLeft = Math.max(0, Math.ceil((CLOSE_END - now) / 86400000));
+  const restFrac = phase === 'during' ? p : 1;
+  const restShowDot = phase === 'during';
+
+  let firstThisSession = true;
+  try {
+    firstThisSession = !sessionStorage.getItem('zs_logo_intro');
+    sessionStorage.setItem('zs_logo_intro', '1');
+  } catch {}
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<SVGSVGElement>('.zs-logo-mark').forEach((svg) => {
+    const path = svg.querySelector<SVGPathElement>('.zs-link');
+    const end = svg.querySelector<SVGCircleElement>('.zs-link-end');
+    const dot = svg.querySelector<SVGCircleElement>('.zs-link-dot');
+    if (!path) return;
+    const len = path.getTotalLength();
+
+    const setState = (frac: number, showDot: boolean) => {
+      path.style.strokeDashoffset = String(100 * (1 - frac));
+      if (end) end.setAttribute('fill', phase === 'after' ? AQUA : CORAL);
+      if (dot) {
+        if (showDot && frac > 0.001 && frac < 0.999) {
+          const pt = path.getPointAtLength(len * frac);
+          dot.setAttribute('cx', pt.x.toFixed(2));
+          dot.setAttribute('cy', pt.y.toFixed(2));
+          dot.style.opacity = '1';
+        } else {
+          dot.style.opacity = '0';
+        }
+      }
+    };
+
+    if (firstThisSession && !reduce) {
+      const dur = 1400;
+      const t0 = performance.now();
+      const tick = (t: number) => {
+        const k = Math.min(1, (t - t0) / dur);
+        const eased = 1 - Math.pow(1 - k, 3);
+        setState(eased, true);
+        if (k < 1) requestAnimationFrame(tick);
+        else setState(restFrac, restShowDot);
+      };
+      setState(0, true);
+      requestAnimationFrame(tick);
+    } else {
+      setState(restFrac, restShowDot);
+    }
+
+    const a = svg.closest('a');
+    if (a) {
+      a.setAttribute(
+        'title',
+        phase === 'before'
+          ? 'Westerscheldetunnel: werkzaamheden starten 1 januari 2027'
+          : phase === 'during'
+            ? `Westerscheldetunnel: ${Math.round(p * 100)}% van de werkzaamheden, heropent over ${daysLeft} dagen`
+            : 'Westerscheldetunnel weer open',
+      );
+    }
+  });
+</script>
