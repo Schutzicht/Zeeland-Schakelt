@@ -4,9 +4,10 @@ import Icon from './Icon.astro';
 
 const path = Astro.url.pathname;
 const links = [
-  { href: '/aanbod', label: 'Bekijk aanbod' },
+  { href: '/aanbod', label: 'Aanbod' },
+  { href: '/schakelplan', label: 'Schakelplan' },
+  { href: '/dashboard', label: 'Zeeland live' },
   { href: '/community', label: 'Community' },
-  { href: '/over', label: 'Hoe het werkt' },
 ];
 const isActive = (href: string) => path === href || (href !== '/' && path.startsWith(href));
 ---

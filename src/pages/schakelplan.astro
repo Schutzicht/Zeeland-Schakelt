@@ -1,0 +1,164 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import TidalLines from '../components/TidalLines.astro';
+import { CATEGORIES, REGION_LABEL } from '../data/taxonomy';
+import { TOWNS } from '../data/towns';
+
+const townsNoord = TOWNS.filter((t) => t.region === 'noord');
+const townsZuid = TOWNS.filter((t) => t.region === 'zuid');
+---
+
+<Base
+  title="Schakelplan"
+  description="Maak in een paar klikken jouw persoonlijke schakelplan: werkplek dichtbij, carpool en veer, plus hoeveel tijd, km en CO2 je bespaart tijdens de tunnelafsluiting."
+>
+  <!-- Kop -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-sea-700 to-aqua-600 text-white">
+    <div class="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl"></div>
+    <TidalLines class="pointer-events-none absolute inset-0 h-full w-full text-white/15" />
+    <div class="relative mx-auto max-w-5xl px-4 pb-12 pt-16 sm:px-6 sm:pt-20 lg:px-8">
+      <span data-reveal class="zs-eyebrow" style="color:rgba(255,255,255,0.92)">Slim plannen</span>
+      <h1 data-reveal style="--d:1" class="hero-title zs-h1 mt-4 max-w-2xl font-display font-extrabold">
+        Maak jouw Schakelplan
+      </h1>
+      <p data-reveal style="--d:2" class="zs-lead mt-4 max-w-xl text-white/85">
+        Vertel waar je woont en werkt. Wij stellen een persoonlijk plan samen met plekken dichtbij, een carpool of het
+        veer, en laten zien hoeveel je bespaart door niet om te rijden.
+      </p>
+
+      <!-- Tabs -->
+      <div data-reveal style="--d:3" class="mt-8 inline-flex rounded-full bg-white/15 p-1 ring-1 ring-white/20 backdrop-blur">
+        <button id="tab-btn-planner" type="button" class="rounded-full px-4 py-2 text-sm font-semibold text-white transition">
+          <span class="inline-flex items-center gap-1.5"><Icon name="route" size={16} /> Planner</span>
+        </button>
+        <button id="tab-btn-chat" type="button" class="rounded-full px-4 py-2 text-sm font-semibold text-white/80 transition">
+          <span class="inline-flex items-center gap-1.5"><Icon name="sparkle" size={16} /> AI-reismaatje</span>
+        </button>
+      </div>
+    </div>
+    <svg class="absolute bottom-0 left-0 w-full text-shell" viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 40c180 30 360 30 540 10 220-24 420-30 660 4 96 14 168 16 240 10v16H0z" fill="currentColor"></path>
+    </svg>
+  </section>
+
+  <div class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+    <!-- ============ PLANNER ============ -->
+    <div id="tab-planner">
+      <form id="plan-form" class="rounded-3xl bg-white p-6 shadow-card ring-1 ring-ink/[0.06] sm:p-8">
+        <div class="grid gap-6 sm:grid-cols-2">
+          <div>
+            <label for="plan-home" class="zs-flabel">Waar woon je?</label>
+            <div class="flex gap-2">
+              <select id="plan-home" class="zs-finput">
+                <option value="">Kies plaats…</option>
+                <optgroup label={REGION_LABEL.noord}>{townsNoord.map((t) => <option value={t.name}>{t.name}</option>)}</optgroup>
+                <optgroup label={REGION_LABEL.zuid}>{townsZuid.map((t) => <option value={t.name}>{t.name}</option>)}</optgroup>
+              </select>
+              <button id="plan-geo" type="button" title="Gebruik mijn locatie" class="grid h-[42px] w-[46px] shrink-0 place-items-center rounded-xl border border-ink/15 text-sea-600 transition hover:bg-sea-50">
+                <Icon name="location" size={18} />
+              </button>
+            </div>
+          </div>
+          <div>
+            <label for="plan-work" class="zs-flabel">Waar werk je?</label>
+            <select id="plan-work" class="zs-finput">
+              <option value="">Kies plaats…</option>
+              <optgroup label={REGION_LABEL.noord}>{townsNoord.map((t) => <option value={t.name}>{t.name}</option>)}</optgroup>
+              <optgroup label={REGION_LABEL.zuid}>{townsZuid.map((t) => <option value={t.name}>{t.name}</option>)}</optgroup>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <span class="zs-flabel">Dagen per week op kantoor</span>
+          <div id="plan-days" class="flex flex-wrap gap-2">
+            {[1, 2, 3, 4, 5].map((d) => (
+              <button type="button" data-days={d} class="zs-daybtn h-10 w-12 rounded-xl border border-ink/15 text-sm font-semibold text-ink-soft transition hover:border-sea-300">
+                {d}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="mt-6">
+          <span class="zs-flabel">Wat heb je nodig?</span>
+          <div class="flex flex-wrap gap-2">
+            {CATEGORIES.map((c) => (
+              <button type="button" data-need={c.id} class="zs-needchip inline-flex items-center gap-1.5 rounded-full border border-ink/15 bg-white px-3.5 py-2 text-sm font-semibold text-ink-soft transition hover:border-sea-300">
+                <Icon name={c.icon} size={15} /> {c.short}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+          <label class="inline-flex cursor-pointer items-center gap-2 text-sm font-medium text-ink-soft">
+            <input id="plan-free" type="checkbox" class="h-4 w-4 rounded border-ink/30 text-sea-600" />
+            Alleen gratis plekken
+          </label>
+          <button type="submit" class="zs-btn-primary inline-flex items-center gap-2 rounded-xl bg-coral-500 px-6 py-3.5 text-base font-bold text-white transition hover:bg-coral-600">
+            <Icon name="sparkle" size={18} /> Stel mijn schakelplan samen
+          </button>
+        </div>
+      </form>
+
+      <div id="plan-result" class="mt-8 hidden"></div>
+    </div>
+
+    <!-- ============ CHAT ============ -->
+    <div id="tab-chat" class="hidden">
+      <div class="rounded-3xl bg-white shadow-card ring-1 ring-ink/[0.06]">
+        <div class="flex items-center gap-3 border-b border-ink/[0.06] p-5">
+          <span class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-sea-500 to-aqua-500 text-white">
+            <Icon name="sparkle" size={20} />
+          </span>
+          <div>
+            <p class="font-display font-bold text-ink">AI-reismaatje</p>
+            <p class="flex items-center gap-1.5 text-xs text-mist">
+              <span class="zs-dot h-1.5 w-1.5 rounded-full bg-aqua-500"></span> online, kent het hele aanbod
+            </p>
+          </div>
+        </div>
+
+        <div id="chat-log" data-lenis-prevent class="flex max-h-[28rem] min-h-[18rem] flex-col gap-4 overflow-y-auto p-5"></div>
+
+        <div class="border-t border-ink/[0.06] p-4">
+          <div id="chat-suggest" class="mb-3 flex flex-wrap gap-2">
+            {[
+              'Ik woon in Terneuzen en werk in Goes, 3 dagen',
+              'Gratis werkplek in Vlissingen',
+              'Carpool van Hulst naar Middelburg',
+            ].map((s) => (
+              <button type="button" class="chat-chip rounded-full border border-ink/15 px-3 py-1.5 text-xs font-medium text-ink-soft transition hover:border-sea-300 hover:text-ink">
+                {s}
+              </button>
+            ))}
+          </div>
+          <form id="chat-form" class="flex items-center gap-2 rounded-2xl border border-ink/15 bg-shell px-3 py-2 focus-within:border-sea-400">
+            <input id="chat-input" type="text" autocomplete="off" placeholder="Typ je vraag…" class="min-w-0 flex-1 bg-transparent py-1.5 text-ink placeholder:text-mist focus:outline-none" />
+            <button type="submit" class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sea-600 text-white transition hover:bg-sea-700">
+              <Icon name="arrowRight" size={18} />
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .zs-flabel { display: block; font-size: 0.875rem; font-weight: 600; color: var(--color-ink); margin-bottom: 0.5rem; }
+  .zs-finput {
+    width: 100%; border-radius: 0.75rem; border: 1px solid rgb(11 36 54 / 0.14);
+    background: var(--color-shell); padding: 0.6rem 0.85rem; font-size: 0.95rem; font-weight: 500;
+    color: var(--color-ink); cursor: pointer;
+  }
+  .zs-finput:focus { outline: none; border-color: var(--color-sea-400); background: #fff; }
+  .zs-daybtn[data-active="true"] { background: var(--color-sea-600); border-color: var(--color-sea-600); color: #fff; }
+  .zs-needchip[data-active="true"] { background: var(--color-sea-600); border-color: var(--color-sea-600); color: #fff; }
+</style>
+
+<script>
+  import '../scripts/schakelplan';
+</script>

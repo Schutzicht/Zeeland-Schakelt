@@ -6,6 +6,8 @@ import { listingCardHTML, popupHTML } from '../lib/cardTemplate';
 import { CATEGORY_MAP } from '../data/taxonomy';
 import type { Listing } from '../lib/types';
 import { debounce } from '../lib/util';
+import { distanceKm } from '../lib/smart';
+import { icon } from '../lib/icons';
 
 interface FilterState {
   q: string;
@@ -15,6 +17,7 @@ interface FilterState {
   avail: string;
   region: string;
   sort: string;
+  near: boolean;
 }
 
 const state: FilterState = {
@@ -25,7 +28,10 @@ const state: FilterState = {
   avail: '',
   region: '',
   sort: 'aanbevolen',
+  near: false,
 };
+
+let userLoc: { lat: number; lng: number } | null = null;
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T | null;
 
@@ -46,6 +52,7 @@ const els = {
   mapPanel: $('zs-map-panel'),
   viewList: $('zs-view-list'),
   viewMap: $('zs-view-map'),
+  near: $('zs-near'),
 };
 
 const chips = Array.from(document.querySelectorAll<HTMLButtonElement>('.zs-chip'));
@@ -83,6 +90,17 @@ function setActiveChip(cat: string) {
   });
 }
 
+function setNearActive(on: boolean) {
+  const b = els.near;
+  if (!b) return;
+  b.classList.toggle('bg-sea-600', on);
+  b.classList.toggle('text-white', on);
+  b.classList.toggle('border-sea-600', on);
+  b.classList.toggle('bg-white', !on);
+  b.classList.toggle('text-ink-soft', !on);
+  b.classList.toggle('border-ink/15', !on);
+}
+
 // ---------- filteren ----------
 function applyFilters(all: Listing[]): Listing[] {
   let res = all.filter((l) => {
@@ -109,7 +127,9 @@ function applyFilters(all: Listing[]): Listing[] {
     return true;
   });
 
-  if (state.sort === 'prijs-op') {
+  if (state.near && userLoc) {
+    res = res.slice().sort((a, b) => distanceKm(userLoc!, a) - distanceKm(userLoc!, b));
+  } else if (state.sort === 'prijs-op') {
     res = res.slice().sort((a, b) => a.priceValue - b.priceValue);
   } else if (state.sort === 'prijs-af') {
     res = res.slice().sort((a, b) => b.priceValue - a.priceValue);
@@ -181,12 +201,30 @@ function render() {
   const list = applyFilters(all);
 
   if (els.list) els.list.innerHTML = list.map(listingCardHTML).join('');
+
+  // afstand-chips wanneer "dichtbij mij" aan staat
+  if (els.list && state.near && userLoc) {
+    els.list.querySelectorAll<HTMLElement>('[data-id]').forEach((card) => {
+      const l = list.find((x) => x.id === card.dataset.id);
+      if (!l) return;
+      const d = distanceKm(userLoc!, l);
+      const media = card.querySelector('div');
+      if (!media) return;
+      const chip = document.createElement('span');
+      chip.className =
+        'absolute bottom-3 right-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-xs font-bold text-sea-700 shadow-sm backdrop-blur';
+      chip.innerHTML = `${icon('location', { size: 12 })} ${d.toFixed(1)} km`;
+      media.appendChild(chip);
+    });
+  }
+
   if (els.empty) els.empty.classList.toggle('hidden', list.length > 0);
   if (els.count) {
-    els.count.textContent =
+    const base =
       list.length === 0
         ? 'Geen resultaten'
         : `${list.length} ${list.length === 1 ? 'plek' : 'plekken'} gevonden`;
+    els.count.textContent = state.near && userLoc ? `${base} · gesorteerd op afstand` : base;
   }
   renderMarkers(list);
 }
@@ -197,8 +235,6 @@ function setView(view: 'list' | 'map') {
   els.listPanel?.classList.toggle('hidden', showMap);
   els.mapPanel?.classList.toggle('hidden', !showMap);
 
-  const active = 'bg-sea-600 text-white';
-  const inactive = 'text-ink-soft';
   els.viewList?.classList.toggle('bg-sea-600', !showMap);
   els.viewList?.classList.toggle('text-white', !showMap);
   els.viewList?.classList.toggle('text-ink-soft', showMap);
@@ -262,11 +298,35 @@ function wire() {
     state.avail = '';
     state.region = '';
     state.sort = 'aanbevolen';
+    state.near = false;
+    setNearActive(false);
     syncControls();
     render();
   };
   els.reset?.addEventListener('click', reset);
   els.emptyReset?.addEventListener('click', reset);
+
+  els.near?.addEventListener('click', () => {
+    if (state.near) {
+      state.near = false;
+      setNearActive(false);
+      render();
+      return;
+    }
+    if (!navigator.geolocation) return;
+    els.near?.classList.add('animate-pulse');
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        userLoc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        state.near = true;
+        els.near?.classList.remove('animate-pulse');
+        setNearActive(true);
+        render();
+      },
+      () => els.near?.classList.remove('animate-pulse'),
+      { timeout: 8000 },
+    );
+  });
 
   els.viewList?.addEventListener('click', () => setView('list'));
   els.viewMap?.addEventListener('click', () => setView('map'));

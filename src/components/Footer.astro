@@ -1,6 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import Icon from './Icon.astro';
+import TidalLines from './TidalLines.astro';
 
 const year = new Date().getFullYear();
 
@@ -12,10 +13,17 @@ const partners = [
 ---
 
 <footer class="relative">
-  <!-- kleurrijke accent-rand -->
-  <div class="h-1 w-full bg-gradient-to-r from-sea-500 via-aqua-400 to-coral-500"></div>
+  <!-- kleurrijke merk-accentrand -->
+  <div class="zs-accentbar h-1 w-full"></div>
 
-  <div class="bg-gradient-to-b from-white to-foam">
+  <div class="relative overflow-hidden bg-gradient-to-b from-white to-foam">
+    <TidalLines class="pointer-events-none absolute inset-x-0 bottom-0 h-3/4 w-full text-sea-500/[0.07]" />
+    <svg class="pointer-events-none absolute -right-12 -top-12 h-64 w-64 text-sea-700/[0.04]" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+      <path d="M12 12.5 C 13.6 21, 22.4 17, 24 24.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path>
+      <circle cx="12" cy="12.5" r="3.6" fill="currentColor"></circle>
+      <circle cx="24" cy="24.5" r="3.6" fill="currentColor"></circle>
+    </svg>
+
     <!-- PARTNERS -->
     <section class="mx-auto max-w-6xl px-4 pt-14 sm:px-6 lg:px-8 lg:pt-16">
       <p class="zs-eyebrow is-center mx-auto w-fit justify-center">Een initiatief van</p>
@@ -52,6 +60,8 @@ const partners = [
           <h3 class="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-mist">Platform</h3>
           <ul class="mt-4 space-y-2.5 text-sm">
             <li><a href="/aanbod" class="font-medium text-ink-soft transition hover:text-sea-700">Bekijk aanbod</a></li>
+            <li><a href="/schakelplan" class="font-medium text-ink-soft transition hover:text-sea-700">Maak je Schakelplan</a></li>
+            <li><a href="/dashboard" class="font-medium text-ink-soft transition hover:text-sea-700">Zeeland live</a></li>
             <li><a href="/plaatsen" class="font-medium text-ink-soft transition hover:text-sea-700">Plaats jouw aanbod</a></li>
             <li><a href="/community" class="font-medium text-ink-soft transition hover:text-sea-700">WhatsApp-community</a></li>
             <li><a href="/over" class="font-medium text-ink-soft transition hover:text-sea-700">Hoe het werkt</a></li>

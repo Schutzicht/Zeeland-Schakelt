@@ -1,0 +1,168 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import TidalLines from '../components/TidalLines.astro';
+import { SEED_LISTINGS } from '../data/listings';
+import { CATEGORIES, REGION_LABEL } from '../data/taxonomy';
+import { occupancyFor, OCCUPANCY_META, weeklySavings } from '../lib/smart';
+
+const listings = SEED_LISTINGS;
+const hubs = listings
+  .filter((l) => l.category === 'werkplek' || l.category === 'vergaderruimte')
+  .map((l) => ({ l, occ: occupancyFor(l) }))
+  .filter((x) => x.occ)
+  .sort((a, b) => (b.occ!.pct - a.occ!.pct));
+
+const catCounts = CATEGORIES.map((c) => ({ c, n: listings.filter((l) => l.category === c.id).length }));
+const maxCat = Math.max(...catCounts.map((x) => x.n), 1);
+const noord = listings.filter((l) => l.region === 'noord').length;
+const zuid = listings.filter((l) => l.region === 'zuid').length;
+const totalRegio = noord + zuid;
+
+const schakelaars = 247;
+const kmWeek = schakelaars * weeklySavings(3).km;
+const co2Week = Math.round(kmWeek * 0.17);
+const urenWeek = Math.round((schakelaars * weeklySavings(3).min) / 60);
+---
+
+<Base
+  title="Zeeland live"
+  description="Live overzicht van de beweging in Zeeland: hoeveel mensen schakelen, bespaarde tijd, km en CO2, en de drukte per werkplek."
+>
+  <!-- Kop -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-sea-900 via-sea-800 to-sea-700 text-white">
+    <div class="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-aqua-500/20 blur-3xl"></div>
+    <TidalLines class="pointer-events-none absolute inset-0 h-full w-full text-white/12" />
+    <div class="relative mx-auto max-w-6xl px-4 pb-12 pt-16 sm:px-6 sm:pt-20 lg:px-8">
+      <span data-reveal class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-sm font-medium ring-1 ring-white/20">
+        <span class="zs-dot h-2 w-2 rounded-full bg-aqua-400"></span>
+        <span class="font-mono uppercase tracking-wider">Live</span>
+      </span>
+      <h1 data-reveal style="--d:1" class="hero-title zs-h1 mt-5 font-display font-extrabold">Zeeland in beweging</h1>
+      <p data-reveal style="--d:2" class="zs-lead mt-4 max-w-xl text-white/85">
+        De regio schakelt samen. Dit gebeurt er nu op het platform tijdens de tunnelafsluiting.
+      </p>
+    </div>
+    <svg class="absolute bottom-0 left-0 w-full text-shell" viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 40c180 30 360 30 540 10 220-24 420-30 660 4 96 14 168 16 240 10v16H0z" fill="currentColor"></path>
+    </svg>
+  </section>
+
+  <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+    <!-- Grote tellers -->
+    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      {
+        [
+          { count: schakelaars, suffix: '', label: 'mensen schakelen nu', icon: 'users', live: true, color: '#155f9c' },
+          { count: urenWeek, suffix: ' uur', label: 'reistijd bespaard deze week', icon: 'clock', live: false, color: '#0c9290' },
+          { count: kmWeek, suffix: ' km', label: 'minder gereden deze week', icon: 'route', live: true, color: '#2479ba' },
+          { count: co2Week, suffix: ' kg', label: 'CO2 bespaard deze week', icon: 'sparkle', live: false, color: '#e9522f' },
+        ].map((s) => (
+          <div class="rounded-3xl bg-white p-5 shadow-card ring-1 ring-ink/[0.05] sm:p-6">
+            <div class="flex items-center justify-between">
+              <span class="grid h-10 w-10 place-items-center rounded-xl" style={`background:${s.color}14;color:${s.color}`}>
+                <Icon name={s.icon} size={20} />
+              </span>
+              {s.live && (
+                <span class="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-wider text-aqua-600">
+                  <span class="zs-dot h-1.5 w-1.5 rounded-full bg-aqua-500"></span>live
+                </span>
+              )}
+            </div>
+            <div
+              class="mt-4 font-display text-3xl font-extrabold tracking-tight sm:text-4xl"
+              style={`color:${s.color}`}
+              data-count={s.count}
+              data-suffix={s.suffix}
+              data-live={s.live ? '1' : '0'}
+            >
+              0
+            </div>
+            <div class="mt-1 text-sm text-mist">{s.label}</div>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+      <!-- Drukte per hub -->
+      <div class="rounded-3xl bg-white p-6 shadow-card ring-1 ring-ink/[0.05]">
+        <div class="flex items-center justify-between">
+          <h2 class="font-display text-lg font-bold text-ink">Drukte per werkplek</h2>
+          <span class="font-mono text-[10px] uppercase tracking-wider text-mist">nu</span>
+        </div>
+        <div class="mt-4 space-y-3.5">
+          {
+            hubs.map(({ l, occ }) => {
+              const meta = OCCUPANCY_META[occ!.level];
+              return (
+                <div>
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="font-semibold text-ink">{l.provider}</span>
+                    <span class="inline-flex items-center gap-1.5 font-medium" style={`color:${meta.color}`}>
+                      <span class="h-1.5 w-1.5 rounded-full" style={`background:${meta.dot}`}></span>
+                      {meta.label} &middot; {occ!.free} vrij
+                    </span>
+                  </div>
+                  <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-sea-50">
+                    <div class="h-full rounded-full" style={`width:${occ!.pct}%;background:${meta.dot}`}></div>
+                  </div>
+                </div>
+              );
+            })
+          }
+        </div>
+      </div>
+
+      <!-- Aanbod per type + regio -->
+      <div class="space-y-6">
+        <div class="rounded-3xl bg-white p-6 shadow-card ring-1 ring-ink/[0.05]">
+          <h2 class="font-display text-lg font-bold text-ink">Aanbod per type</h2>
+          <div class="mt-4 space-y-3">
+            {
+              catCounts.map(({ c, n }) => (
+                <div>
+                  <div class="flex items-center justify-between text-sm">
+                    <span class="inline-flex items-center gap-1.5 font-medium text-ink-soft">
+                      <span style={`color:${c.color}`}><Icon name={c.icon} size={15} /></span>
+                      {c.short}
+                    </span>
+                    <span class="font-mono text-xs text-mist">{n}</span>
+                  </div>
+                  <div class="mt-1.5 h-2 overflow-hidden rounded-full bg-sea-50">
+                    <div class="h-full rounded-full" style={`width:${Math.round((n / maxCat) * 100)}%;background:${c.color}`}></div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="rounded-3xl bg-white p-6 shadow-card ring-1 ring-ink/[0.05]">
+          <h2 class="font-display text-lg font-bold text-ink">Beide kanten van de tunnel</h2>
+          <div class="mt-4 flex h-3 overflow-hidden rounded-full">
+            <div class="bg-sea-500" style={`width:${Math.round((noord / totalRegio) * 100)}%`}></div>
+            <div class="bg-aqua-500" style={`width:${Math.round((zuid / totalRegio) * 100)}%`}></div>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-sm">
+            <span class="inline-flex items-center gap-1.5 text-ink-soft"><span class="h-2.5 w-2.5 rounded-full bg-sea-500"></span>{REGION_LABEL.noord} ({noord})</span>
+            <span class="inline-flex items-center gap-1.5 text-ink-soft"><span class="h-2.5 w-2.5 rounded-full bg-aqua-500"></span>{REGION_LABEL.zuid} ({zuid})</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live feed -->
+    <div class="mt-8 rounded-3xl bg-white p-6 shadow-card ring-1 ring-ink/[0.05]">
+      <div class="flex items-center gap-2">
+        <span class="zs-dot h-2 w-2 rounded-full bg-aqua-500"></span>
+        <h2 class="font-display text-lg font-bold text-ink">Live activiteit</h2>
+      </div>
+      <div id="zs-feed" class="mt-4 space-y-2"></div>
+    </div>
+  </div>
+</Base>
+
+<script>
+  import '../scripts/dashboard';
+</script>

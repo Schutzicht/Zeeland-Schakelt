@@ -62,13 +62,13 @@ export function listingCardHTML(l: Listing): string {
   return `
   <a href="${listingHref(l)}" data-id="${escapeHtml(
     l.id,
-  )}" class="zs-card group relative flex flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink/[0.06] shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-float focus-visible:-translate-y-1">
+  )}" class="zs-card group relative flex flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink/[0.06] shadow-card transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:shadow-float focus-visible:-translate-y-1.5">
     <div class="relative aspect-[3/2] overflow-hidden" style="background-color:${cat.tint}">
       <span class="absolute inset-0 grid place-items-center opacity-25" style="color:${cat.color}">${icon(
         cat.icon,
         { size: 64, stroke: 1.2 },
       )}</span>
-      <img src="${img}" alt="${title}" loading="lazy" decoding="async" onerror="this.remove()" class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]" />
+      <img src="${img}" alt="${title}" loading="lazy" decoding="async" onerror="this.remove()" class="absolute inset-0 h-full w-full object-cover transition duration-[850ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]" />
       <span class="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-ink/30 to-transparent"></span>
       <span class="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-xs font-bold backdrop-blur" style="color:${
         cat.color

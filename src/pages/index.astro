@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
+import TidalLines from '../components/TidalLines.astro';
 import { CATEGORIES } from '../data/taxonomy';
 import { SEED_LISTINGS } from '../data/listings';
 import { listingCardHTML } from '../lib/cardTemplate';
@@ -45,6 +46,36 @@ const steps = [
     text: 'Regel je plek of rit direct bij de aanbieder, of plaats je eigen vraag in de community.',
   },
 ];
+
+const features = [
+  {
+    icon: 'route',
+    title: 'Mijn Schakelplan',
+    text: 'Vul je woon-werk in en krijg een persoonlijk plan met plekken dichtbij, plus je besparing in tijd, km en CO2.',
+    href: '/schakelplan',
+    cta: 'Maak je plan',
+    color: '#155f9c',
+    tint: '#eaf4fb',
+  },
+  {
+    icon: 'waves',
+    title: 'Zeeland live',
+    text: 'Een live dashboard dat de hele regio in beweging laat zien: schakelaars, bespaarde km en drukte per hub.',
+    href: '/dashboard',
+    cta: 'Bekijk live',
+    color: '#0c9290',
+    tint: '#e2f6f4',
+  },
+  {
+    icon: 'sparkle',
+    title: 'AI-reismaatje',
+    text: 'Typ gewoon wat je zoekt. De slimme assistent kent het hele aanbod en denkt met je mee.',
+    href: '/schakelplan',
+    cta: 'Vraag het',
+    color: '#e9522f',
+    tint: '#fdeee8',
+  },
+];
 ---
 
 <Base>
@@ -58,26 +89,27 @@ const steps = [
     </div>
     <div class="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/60 to-ink/25"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-ink/40 to-transparent"></div>
+    <TidalLines class="pointer-events-none absolute inset-0 h-full w-full text-white/15" />
     <div class="pointer-events-none absolute -right-32 -top-32 h-[34rem] w-[34rem] rounded-full bg-aqua-500/15 blur-3xl"></div>
     <div class="pointer-events-none absolute -bottom-40 left-1/4 h-96 w-96 rounded-full bg-coral-500/10 blur-3xl"></div>
 
     <div class="relative mx-auto max-w-7xl px-4 pb-44 pt-24 sm:px-6 sm:pt-28 lg:px-8 lg:pb-56 lg:pt-36">
       <div class="max-w-3xl">
-        <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white/95 ring-1 ring-white/25 backdrop-blur">
+        <span data-reveal class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white/95 ring-1 ring-white/25 backdrop-blur">
           <Icon name="calendar" size={15} class="text-aqua-400" />
           Westerscheldetunnel dicht: jan t/m apr 2027
         </span>
 
-        <h1 class="hero-title mt-7 font-display text-[2.6rem] font-extrabold leading-[1.04] tracking-tight sm:text-6xl lg:text-7xl">
+        <h1 data-reveal style="--d:1" class="hero-title zs-h1 mt-7 font-display font-extrabold">
           De tunnel dicht?<br /><span class="text-aqua-300">Zeeland schakelt door.</span>
         </h1>
 
-        <p class="mt-6 max-w-xl text-lg leading-relaxed text-white/85 sm:text-xl">
+        <p data-reveal style="--d:2" class="zs-lead mt-6 max-w-xl text-white/85">
           Vind een werkplek, deelrit of overnachting dicht bij huis. Of bied er zelf een aan. Vraag en aanbod op één
           plek, plus een community die elkaar verder helpt.
         </p>
 
-        <div class="mt-9 flex flex-col gap-3 sm:flex-row">
+        <div data-reveal style="--d:3" class="mt-9 flex flex-col gap-3 sm:flex-row">
           <a
             href="/aanbod"
             class="zs-btn-light inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-7 py-4 text-base font-bold text-sea-700 transition hover:bg-sea-50"
@@ -95,7 +127,7 @@ const steps = [
         </div>
 
         <!-- Snel zoeken -->
-        <form action="/aanbod" method="get" class="mt-10 flex max-w-xl items-center gap-2 rounded-2xl bg-white/95 p-2 shadow-2xl ring-1 ring-white/30">
+        <form data-reveal style="--d:4" action="/aanbod" method="get" class="mt-10 flex max-w-xl items-center gap-2 rounded-2xl bg-white/95 p-2 shadow-2xl ring-1 ring-white/30">
           <span class="pl-2.5 text-mist"><Icon name="search" size={20} /></span>
           <input
             type="search"
@@ -108,7 +140,7 @@ const steps = [
           </button>
         </form>
 
-        <p class="mt-5 flex items-center gap-2 text-sm text-white/70">
+        <p data-reveal style="--d:5" class="mt-5 flex items-center gap-2 text-sm text-white/70">
           <Icon name="checkCircle" size={17} class="text-aqua-400" />
           Geen account nodig. Direct toegang, mobiel en gratis.
         </p>
@@ -123,7 +155,7 @@ const steps = [
 
   <!-- STATS -->
   <section class="relative z-10 mx-auto -mt-12 max-w-5xl px-4 sm:-mt-16 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-2 divide-ink/[0.07] rounded-3xl bg-white p-6 shadow-card ring-1 ring-ink/5 sm:grid-cols-4 sm:divide-x sm:p-8">
+    <div data-reveal class="grid grid-cols-2 divide-ink/[0.07] rounded-3xl bg-white p-6 shadow-card ring-1 ring-ink/5 sm:grid-cols-4 sm:divide-x sm:p-8">
       {
         [
           { n: `${totalPlekken}`, l: 'plekken & ritten' },
@@ -132,7 +164,7 @@ const steps = [
           { n: '3', l: 'community-kanalen' },
         ].map((s) => (
           <div class="px-2 py-2 text-center sm:px-4">
-            <div class="font-display text-3xl font-extrabold text-sea-700 sm:text-4xl">{s.n}</div>
+            <div class="zs-gradient-text font-display text-3xl font-extrabold sm:text-4xl">{s.n}</div>
             <div class="mt-1.5 text-xs font-medium text-mist sm:text-sm">{s.l}</div>
           </div>
         ))
@@ -142,10 +174,10 @@ const steps = [
 
   <!-- CATEGORIEËN -->
   <section class="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:mt-36 lg:px-8">
-    <div class="flex items-end justify-between gap-4">
+    <div data-reveal class="flex items-end justify-between gap-4">
       <div>
         <p class="zs-eyebrow">Ontdek</p>
-        <h2 class="mt-3 font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">Wat zoek je?</h2>
+        <h2 class="zs-h2 mt-3 font-display font-extrabold text-ink">Wat zoek je?</h2>
         <p class="mt-3 max-w-md text-mist">Vier soorten aanbod, allemaal dicht bij huis.</p>
       </div>
       <a href="/aanbod" class="hidden shrink-0 items-center gap-1 text-sm font-semibold text-sea-600 hover:text-sea-700 sm:inline-flex">
@@ -153,7 +185,7 @@ const steps = [
       </a>
     </div>
 
-    <div class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-5">
+    <div data-reveal style="--d:1" class="mt-8 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-5">
       {
         CATEGORIES.map((c) => (
           <a
@@ -190,7 +222,7 @@ const steps = [
 
   <!-- HOE HET WERKT -->
   <section id="hoe-het-werkt" class="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:mt-36 lg:px-8">
-    <div class="rounded-[2rem] bg-foam px-6 py-14 sm:px-12 sm:py-16">
+    <div data-reveal class="rounded-[2rem] bg-foam px-6 py-14 sm:px-12 sm:py-16">
       <div class="mx-auto max-w-2xl text-center">
         <p class="zs-eyebrow is-center justify-center">Zo werkt het</p>
         <h2 class="mt-3 font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">In drie stappen geschakeld</h2>
@@ -203,7 +235,7 @@ const steps = [
               <span class="absolute -top-3.5 left-7 grid h-8 w-8 place-items-center rounded-full bg-sea-600 text-sm font-bold text-white shadow-sm">
                 {i + 1}
               </span>
-              <span class="grid h-12 w-12 place-items-center rounded-2xl bg-sea-50 text-sea-600">
+              <span class="zs-tile h-12 w-12">
                 <Icon name={s.icon} size={22} />
               </span>
               <h3 class="mt-5 font-display text-lg font-bold text-ink">{s.title}</h3>
@@ -215,12 +247,40 @@ const steps = [
     </div>
   </section>
 
+  <!-- SLIMME FEATURES -->
+  <section class="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:mt-36 lg:px-8">
+    <div data-reveal>
+      <p class="zs-eyebrow">Slim &amp; nieuw</p>
+      <h2 class="zs-h2 mt-3 font-display font-extrabold text-ink">Niet zomaar een lijst</h2>
+      <p class="mt-3 max-w-lg text-mist">Slimme tools die je echt op weg helpen tijdens de afsluiting.</p>
+    </div>
+    <div data-reveal style="--d:1" class="mt-8 grid gap-5 md:grid-cols-3">
+      {
+        features.map((f) => (
+          <a
+            href={f.href}
+            class="group relative overflow-hidden rounded-3xl border border-ink/[0.06] bg-white p-7 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-float"
+          >
+            <span class="zs-tile h-12 w-12">
+              <Icon name={f.icon} size={24} />
+            </span>
+            <h3 class="mt-5 font-display text-xl font-bold text-ink">{f.title}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-mist">{f.text}</p>
+            <p class="mt-4 inline-flex items-center gap-1 text-sm font-semibold" style={`color:${f.color}`}>
+              {f.cta} <Icon name="arrowRight" size={15} class="transition group-hover:translate-x-0.5" />
+            </p>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
   <!-- UITGELICHT -->
   <section class="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:mt-36 lg:px-8">
-    <div class="flex items-end justify-between gap-4">
+    <div data-reveal class="flex items-end justify-between gap-4">
       <div>
         <p class="zs-eyebrow">Aanbod</p>
-        <h2 class="mt-3 font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">Uitgelicht aanbod</h2>
+        <h2 class="zs-h2 mt-3 font-display font-extrabold text-ink">Uitgelicht aanbod</h2>
         <p class="mt-3 max-w-md text-mist">Een greep uit wat er nu beschikbaar is.</p>
       </div>
       <a href="/aanbod" class="hidden shrink-0 items-center gap-1 text-sm font-semibold text-sea-600 hover:text-sea-700 sm:inline-flex">
@@ -228,7 +288,7 @@ const steps = [
       </a>
     </div>
 
-    <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div data-reveal style="--d:1" class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {featured.map((l) => <div set:html={listingCardHTML(l)} />)}
     </div>
 
@@ -241,7 +301,7 @@ const steps = [
 
   <!-- COMMUNITY -->
   <section class="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:mt-36 lg:px-8">
-    <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-aqua-600 to-sea-700 text-white">
+    <div data-reveal class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-aqua-600 to-sea-700 text-white">
       <div class="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl"></div>
       <div class="relative grid items-center gap-10 p-8 sm:p-14 lg:grid-cols-2">
         <div>
@@ -282,7 +342,7 @@ const steps = [
 
   <!-- VOOR AANBIEDERS -->
   <section class="mx-auto mt-28 max-w-7xl px-4 sm:px-6 lg:mt-36 lg:px-8">
-    <div class="flex flex-col items-center justify-between gap-7 rounded-[2rem] border border-ink/[0.08] bg-white p-8 text-center shadow-card sm:p-14 lg:flex-row lg:text-left">
+    <div data-reveal class="flex flex-col items-center justify-between gap-7 rounded-[2rem] border border-ink/[0.08] bg-white p-8 text-center shadow-card sm:p-14 lg:flex-row lg:text-left">
       <div class="max-w-xl">
         <span class="inline-flex items-center gap-2 rounded-full bg-coral-500/10 px-3.5 py-1.5 text-sm font-semibold text-coral-600">
           <Icon name="hand" size={16} /> Voor aanbieders

@@ -58,7 +58,7 @@ const IMAGES = [
   {
     name: "hero-home",
     prompt:
-      "Wide cinematic aerial view of the Zeeland coastline where green polder land meets the calm Westerschelde estuary at low golden hour. A thin coastal road curves through the landscape, soft sandbanks and distant dunes, glassy water catching warm light. Expansive, tranquil and optimistic. Aspect ratio 16:9.",
+      "Striking cinematic aerial photograph at golden hour over the Westerschelde estuary in Zeeland. Sculpted braided tidal channels and sandbanks form elegant flowing patterns through deep teal and turquoise water; a single sleek passenger ferry cuts a luminous white wake diagonally across the scene, evoking movement and connection between two shores. Low warm sun rakes across the water with long shadows, soft mist on the far horizon and rich layered depth. Moody, luminous and high-end, like an award-winning travel magazine cover. Keep the left third calmer and more open for headline text overlay. Aspect ratio 16:9.",
   },
   {
     name: "hero-community",

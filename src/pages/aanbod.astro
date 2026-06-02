@@ -100,6 +100,14 @@ const townsZuid = TOWNS.filter((t) => t.region === 'zuid');
         </select>
 
         <button
+          id="zs-near"
+          type="button"
+          class="inline-flex items-center gap-1.5 rounded-lg border border-ink/15 bg-white px-3 py-2 text-sm font-semibold text-ink-soft transition hover:border-sea-300 hover:text-ink"
+        >
+          <Icon name="location" size={16} /> Dichtbij mij
+        </button>
+
+        <button
           id="zs-reset"
           type="button"
           class="ml-auto inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-mist transition hover:bg-sea-50 hover:text-ink"

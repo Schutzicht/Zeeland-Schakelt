@@ -3,7 +3,6 @@ import {
   deleteListing,
   getSubmissions,
   onStoreChange,
-  publicListings,
   resetDemo,
   setStatus,
 } from '../lib/store';

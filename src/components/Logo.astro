@@ -3,18 +3,19 @@ interface Props {
   class?: string;
 }
 const { class: cls = '' } = Astro.props;
+const gid = 'zsmark-' + Math.random().toString(36).slice(2, 9);
 ---
 
 <a href="/" class={`group inline-flex items-center gap-2.5 ${cls}`} aria-label="Zeeland Schakelt home">
   <span class="grid h-9 w-9 shrink-0 place-items-center transition-transform duration-300 group-hover:scale-110">
     <svg width="34" height="34" viewBox="0 0 36 36" fill="none" aria-hidden="true">
       <defs>
-        <linearGradient id="zs-mark" x1="6" y1="10" x2="30" y2="28" gradientUnits="userSpaceOnUse">
+        <linearGradient id={gid} x1="6" y1="10" x2="30" y2="28" gradientUnits="userSpaceOnUse">
           <stop offset="0" stop-color="#2479ba"></stop>
           <stop offset="1" stop-color="#2ed3c9"></stop>
         </linearGradient>
       </defs>
-      <path d="M12 12.5 C 13.6 21, 22.4 17, 24 24.5" stroke="url(#zs-mark)" stroke-width="3.4" stroke-linecap="round"></path>
+      <path d={`M12 12.5 C 13.6 21, 22.4 17, 24 24.5`} stroke={`url(#${gid})`} stroke-width="3.4" stroke-linecap="round"></path>
       <circle cx="12" cy="12.5" r="3.7" fill="#155f9c"></circle>
       <circle cx="24" cy="24.5" r="3.7" fill="#fb6b49"></circle>
     </svg>

@@ -6,7 +6,7 @@
    voor activerende call-to-actions.
 ----------------------------------------------------------------- */
 @theme {
-  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
@@ -108,6 +108,14 @@ h1, h2, h3, h4, .font-display {
   filter: drop-shadow(0 4px 6px rgba(11, 42, 67, 0.3));
 }
 
+/* live teller-bump */
+@keyframes zs-bump {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.09); }
+  100% { transform: scale(1); }
+}
+.zs-bump { animation: zs-bump 0.42s ease; }
+
 /* subtiele animaties */
 @keyframes zs-rise {
   from { opacity: 0; transform: translateY(10px); }
@@ -128,26 +136,131 @@ h1, h2, h3, h4, .font-display {
 header { transition: box-shadow 0.25s ease; }
 header.zs-scrolled { box-shadow: 0 8px 28px -16px rgba(11, 42, 67, 0.4); }
 
-/* eyebrow / kicker label */
+/* ============================================================
+   Merksysteem Zeeland Schakelt — "de schakel: twee oevers verbonden"
+   ============================================================ */
+:root {
+  --gradient-schakel: linear-gradient(115deg, #155f9c 0%, #2479ba 45%, #2ed3c9 100%);
+  --ease-out-quart: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.42, 0.5, 1);
+}
+
+/* ---- scroll-reveal (premium motion) ---- */
+.zs-js [data-reveal] {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.75s var(--ease-out-quart),
+    transform 0.75s var(--ease-out-quart);
+  transition-delay: calc(var(--d, 0) * 90ms);
+  will-change: opacity, transform;
+}
+.zs-js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .zs-js [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none;
+  }
+}
+
+/* ---- vloeiende display-typografie (clamp) ---- */
+.zs-h1 {
+  font-size: clamp(2.55rem, 6vw, 4.75rem);
+  line-height: 1.03;
+  letter-spacing: -0.025em;
+}
+.zs-h2 {
+  font-size: clamp(1.85rem, 3.6vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.022em;
+}
+.zs-lead {
+  font-size: clamp(1.05rem, 1.4vw, 1.28rem);
+  line-height: 1.62;
+}
+
+/* ---- Lenis smooth scroll ---- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ---- branded scroll-voortgangsbalk ---- */
+#zs-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 3px;
+  z-index: 60;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.08s linear;
+  pointer-events: none;
+}
+
+/* eyebrow / kicker — mono label met schakel-node */
 .zs-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  gap: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-sea-600);
 }
 .zs-eyebrow::before {
   content: "";
-  width: 1.75rem;
-  height: 2px;
-  border-radius: 2px;
-  background: currentColor;
-  opacity: 0.45;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--gradient-schakel);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-aqua-400) 22%, transparent);
 }
-.zs-eyebrow.is-center::before { display: none; }
+
+/* signature gradient-tekst */
+.zs-gradient-text {
+  background: var(--gradient-schakel);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* kleurrijke merk-accentbalk */
+.zs-accentbar {
+  background: linear-gradient(90deg, var(--color-sea-500), var(--color-aqua-400), var(--color-coral-500));
+}
+
+/* merk-icoontile, gevuld met de schakel-gradient */
+.zs-tile {
+  display: grid;
+  place-items: center;
+  border-radius: 0.9rem;
+  background: var(--gradient-schakel);
+  color: #fff;
+  box-shadow: 0 10px 22px -12px rgba(18, 130, 176, 0.65);
+}
+
+/* zachte merk-gloed */
+.zs-glow {
+  box-shadow: 0 16px 38px -18px rgba(36, 121, 186, 0.5);
+}
 
 /* premium primaire knop */
 .zs-btn-primary {

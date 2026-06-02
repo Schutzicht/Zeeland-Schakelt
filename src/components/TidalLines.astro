@@ -1,0 +1,27 @@
+---
+// Signature merk-motief: vloeiende getijdengeul-lijnen (Westerschelde).
+// Gebruik currentColor via een text-* class + opacity op de wrapper.
+interface Props {
+  class?: string;
+}
+const { class: cls = '' } = Astro.props;
+---
+
+<svg
+  class={cls}
+  viewBox="0 0 1440 520"
+  fill="none"
+  preserveAspectRatio="xMidYMid slice"
+  aria-hidden="true"
+>
+  <g stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round">
+    <path d="M-40 56 C 280 8 520 108 820 66 S 1280 16 1500 78" opacity="0.95"></path>
+    <path d="M-40 108 C 300 66 540 158 840 116 S 1300 64 1500 128" opacity="0.85"></path>
+    <path d="M-40 164 C 260 116 560 214 860 168 S 1320 116 1500 184" opacity="0.74"></path>
+    <path d="M-40 222 C 320 174 520 266 820 224 S 1280 172 1500 236" opacity="0.64"></path>
+    <path d="M-40 282 C 280 234 560 322 880 280 S 1320 228 1500 296" opacity="0.55"></path>
+    <path d="M-40 344 C 300 298 540 384 840 342 S 1280 288 1500 352" opacity="0.46"></path>
+    <path d="M-40 406 C 260 360 560 444 860 402 S 1320 348 1500 414" opacity="0.38"></path>
+    <path d="M-40 468 C 320 420 520 504 820 462 S 1280 408 1500 472" opacity="0.3"></path>
+  </g>
+</svg>
