@@ -1,0 +1,149 @@
+---
+import Icon from './Icon.astro';
+
+const stops = [
+  { href: '/aanbod', icon: 'map', label: 'Bekijk het aanbod', desc: 'Kaart, lijst en slimme filters' },
+  { href: '/schakelplan', icon: 'route', label: 'Maak je Schakelplan', desc: 'Persoonlijk plan met je besparing' },
+  { href: '/schakelplan', icon: 'sparkle', label: 'AI-reismaatje', desc: 'Vraag het, het denkt met je mee' },
+  { href: '/dashboard', icon: 'waves', label: 'Zeeland live', desc: 'De hele regio in beweging' },
+  { href: '/plaatsen', icon: 'plus', label: 'Plaats jouw aanbod', desc: 'Marktplaats, zonder account' },
+  { href: '/community', icon: 'whatsapp', label: 'Community', desc: 'WhatsApp-kanalen' },
+];
+---
+
+<div id="zs-tour" class="fixed inset-0 z-[120] flex items-center justify-center p-4" style="display:none">
+  <div class="zs-tour-backdrop absolute inset-0 bg-ink/65 backdrop-blur-sm" data-tour-close></div>
+
+  <div class="zs-tour-card relative z-10 max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-ink/10 sm:p-8" role="dialog" aria-modal="true" aria-labelledby="zs-tour-title">
+    <button type="button" class="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full text-mist transition hover:bg-foam hover:text-ink" data-tour-close aria-label="Sluiten">
+      <Icon name="close" size={20} />
+    </button>
+
+    <span class="zs-chip-demo inline-flex items-center gap-1.5 rounded-full bg-coral-500/10 px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-coral-600 ring-1 ring-coral-500/25">
+      <span class="h-1.5 w-1.5 rounded-full bg-coral-500"></span> Werkende demo
+    </span>
+
+    <p class="zs-eyebrow mt-4">Welkom</p>
+    <h2 id="zs-tour-title" class="mt-2 font-display text-3xl font-extrabold tracking-tight text-ink sm:text-[34px]">
+      Ontdek Zeeland Schakelt
+    </h2>
+    <p class="mt-3 max-w-xl text-[15px] leading-relaxed text-ink-soft">
+      Eén plek waar vraag en aanbod rond werken, reizen en verblijven samenkomen tijdens de afsluiting van de
+      Westerscheldetunnel. Klik gerust rond, dit is een werkende demo. De definitieve versie bouwen en beheren we
+      samen met de werkgroep.
+    </p>
+
+    <div class="mt-6 grid gap-2.5 sm:grid-cols-2">
+      {
+        stops.map((s) => (
+          <a href={s.href} class="zs-tour-stop group flex items-center gap-3 rounded-2xl border border-ink/10 p-3 transition hover:border-sea-300 hover:bg-sea-50/50">
+            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-sea-500 to-aqua-500 text-white">
+              <Icon name={s.icon} size={20} />
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-sm font-semibold text-ink">{s.label}</span>
+              <span class="block truncate text-xs text-mist">{s.desc}</span>
+            </span>
+            <span class="text-sea-600 transition group-hover:translate-x-0.5">
+              <Icon name="arrowRight" size={16} />
+            </span>
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="mt-6 flex items-center justify-between gap-3 border-t border-ink/[0.06] pt-5">
+      <span class="text-xs text-mist">Je kunt de rondleiding later altijd heropenen.</span>
+      <button type="button" class="inline-flex items-center gap-1.5 rounded-xl bg-sea-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-sea-700" data-tour-close>
+        Ik kijk zelf rond
+      </button>
+    </div>
+  </div>
+</div>
+
+<button id="zs-tour-open" type="button" class="zs-tour-fab" aria-label="Rondleiding openen">
+  <Icon name="route" size={17} />
+  <span>Rondleiding</span>
+</button>
+
+<style is:global>
+  #zs-tour .zs-tour-card {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  #zs-tour.zs-tour-in .zs-tour-card {
+    opacity: 1;
+    transform: none;
+  }
+  #zs-tour .zs-tour-backdrop {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  #zs-tour.zs-tour-in .zs-tour-backdrop {
+    opacity: 1;
+  }
+  .zs-tour-fab {
+    position: fixed;
+    left: 1rem;
+    bottom: 1rem;
+    z-index: 90;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 9999px;
+    background: var(--color-ink);
+    color: #fff;
+    font-family: var(--font-display, 'Space Grotesk'), sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 10px 24px -8px rgba(11, 36, 54, 0.45);
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .zs-tour-fab:hover {
+    transform: translateY(-1px);
+    background: var(--color-sea-700, #0b3a5c);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #zs-tour .zs-tour-card,
+    #zs-tour .zs-tour-backdrop { transition: none; }
+  }
+</style>
+
+<script>
+  const KEY = 'zs_tour_v1';
+  const tour = document.getElementById('zs-tour');
+  const openBtn = document.getElementById('zs-tour-open');
+
+  function open() {
+    if (!tour) return;
+    tour.style.display = 'flex';
+    requestAnimationFrame(() => tour.classList.add('zs-tour-in'));
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    if (!tour) return;
+    tour.classList.remove('zs-tour-in');
+    document.body.style.overflow = '';
+    try {
+      localStorage.setItem(KEY, '1');
+    } catch {}
+    setTimeout(() => {
+      if (tour) tour.style.display = 'none';
+    }, 320);
+  }
+
+  tour?.querySelectorAll('[data-tour-close]').forEach((el) => el.addEventListener('click', close));
+  openBtn?.addEventListener('click', open);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && tour && tour.style.display !== 'none') close();
+  });
+
+  // Eerste bezoek: toon de rondleiding automatisch.
+  let seen = false;
+  try {
+    seen = !!localStorage.getItem(KEY);
+  } catch {}
+  if (!seen) setTimeout(open, 650);
+</script>
