@@ -11,16 +11,16 @@ const months = [
 ];
 ---
 
-<div class="zs-build pointer-events-none absolute inset-x-0 bottom-0 h-[185px]">
+<div class="zs-build pointer-events-none absolute inset-x-0 bottom-0 h-[150px]">
   <!-- crème golf -->
-  <svg class="absolute bottom-0 left-0 h-[130px] w-full text-cream" viewBox="0 0 1440 130" fill="none" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0 58 C 300 26, 560 28, 760 50 S 1180 86, 1440 52 L1440 130 L0 130 Z" fill="currentColor"></path>
+  <svg class="absolute bottom-0 left-0 h-[112px] w-full text-cream" viewBox="0 0 1440 112" fill="none" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 52 C 300 24, 560 26, 760 46 S 1180 80, 1440 48 L1440 112 L0 112 Z" fill="currentColor"></path>
   </svg>
 
   <!-- prominente bouwbalk = tunnelroute / tijdlijn -->
   <svg
     class="absolute left-0 w-full"
-    style="bottom:74px;height:34px;filter:drop-shadow(0 6px 16px rgba(18,130,176,0.28))"
+    style="bottom:50px;height:34px;filter:drop-shadow(0 6px 16px rgba(18,130,176,0.28))"
     viewBox="0 0 1440 34"
     fill="none"
     preserveAspectRatio="none"
@@ -52,25 +52,25 @@ const months = [
   </svg>
 
   <!-- tunnel-segmentstreepjes over de balk -->
-  <div class="absolute left-0 right-0 flex items-center justify-between px-[3%]" style="bottom:84px">
+  <div class="absolute left-0 right-0 flex items-center justify-between px-[3%]" style="bottom:60px">
     {Array.from({ length: 18 }).map(() => <span class="h-3 w-px bg-white/45"></span>)}
   </div>
 
   <!-- oever-knopen -->
-  <span class="absolute h-4 w-4 rounded-full bg-sea-700 ring-4 ring-cream" style="left:1%;bottom:91px;transform:translate(-50%,50%)"></span>
-  <span class="zs-shore-end absolute h-4 w-4 rounded-full bg-ink/30 ring-4 ring-cream" style="left:99%;bottom:91px;transform:translate(-50%,50%)"></span>
+  <span class="absolute h-4 w-4 rounded-full bg-sea-700 ring-4 ring-cream" style="left:1%;bottom:67px;transform:translate(-50%,50%)"></span>
+  <span class="zs-shore-end absolute h-4 w-4 rounded-full bg-ink/30 ring-4 ring-cream" style="left:99%;bottom:67px;transform:translate(-50%,50%)"></span>
 
   <!-- maand-labels -->
   {
     months.map((m) => (
-      <span class="absolute font-mono text-[11px] font-semibold text-mist" style={`left:${m.left}%;bottom:52px;transform:translateX(-50%)`}>
+      <span class="absolute font-mono text-[11px] font-semibold text-mist" style={`left:${m.left}%;bottom:26px;transform:translateX(-50%)`}>
         {m.label}
       </span>
     ))
   }
 
   <!-- bouwvakker -->
-  <div class="zs-worker absolute" style="left:1%;bottom:96px;transform:translateX(-50%)">
+  <div class="zs-worker absolute" style="left:1%;bottom:72px;transform:translateX(-50%)">
     <svg width="58" height="68" viewBox="0 0 48 56" fill="none" aria-hidden="true">
       <ellipse cx="24" cy="54" rx="13" ry="2.6" fill="#0b2436" opacity="0.14"></ellipse>
       <rect x="18" y="38" width="5" height="13" rx="2.5" fill="#114c7f"></rect>
