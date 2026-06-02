@@ -42,10 +42,12 @@
   --color-coral-500: #fb6b49;
   --color-coral-600: #e9522f;
 
-  /* warme/neutrale vlakken */
-  --color-sand: #f6f1e8;
+  /* warme/neutrale vlakken — place-brand crème i.p.v. koud wit */
+  --color-cream: #f6f1e6;
+  --color-cream-deep: #efe7d6;
+  --color-sand: #f3ece0;
   --color-foam: #eaf4fb;
-  --color-shell: #fbfdfe;
+  --color-shell: #f6f1e6;
 
   --radius-xl: 1.1rem;
   --radius-2xl: 1.5rem;
