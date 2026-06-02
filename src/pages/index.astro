@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
+import HeroBuild from '../components/HeroBuild.astro';
 import { CATEGORIES } from '../data/taxonomy';
 import { SEED_LISTINGS } from '../data/listings';
 import { listingCardHTML } from '../lib/cardTemplate';
@@ -145,10 +146,8 @@ const features = [
       </div>
     </div>
 
-    <!-- golf naar wit -->
-    <svg class="absolute bottom-0 left-0 w-full text-shell" viewBox="0 0 1440 120" fill="none" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0 60c180 40 360 40 540 16 220-30 420-44 660 4 96 19 168 22 240 14v26H0z" fill="currentColor" />
-    </svg>
+    <!-- hero-onderkant = tunnel-bouwtijdlijn met bouwvakker -->
+    <HeroBuild />
   </section>
 
   <!-- STATS -->

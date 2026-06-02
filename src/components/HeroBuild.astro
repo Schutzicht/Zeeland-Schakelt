@@ -1,0 +1,138 @@
+---
+// Hero-onderkant = de tunnel-bouwtijdlijn (1 jan - 1 mei 2027).
+// Een bouwvakker met hamer reist over de lijn naarmate de werkzaamheden vorderen.
+// De golf vormt de "oever/tunnel"; de lijn vult zich (gebouwd) achter de vakker.
+---
+
+<div class="zs-build pointer-events-none absolute inset-x-0 bottom-0 h-[150px]">
+  <!-- crème golf (oever / overgang naar de pagina) -->
+  <svg class="absolute bottom-0 left-0 h-[120px] w-full text-cream" viewBox="0 0 1440 120" fill="none" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 52 C 300 22, 560 24, 760 44 S 1180 78, 1440 46 L1440 120 L0 120 Z" fill="currentColor"></path>
+  </svg>
+
+  <!-- bouwlijn = de tunnelroute / tijdlijn -->
+  <svg class="absolute left-0 w-full" style="bottom:80px;height:16px" viewBox="0 0 1440 16" fill="none" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="zsBuildGrad" x1="0" y1="0" x2="1440" y2="0" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#155f9c"></stop>
+        <stop offset="1" stop-color="#2ed3c9"></stop>
+      </linearGradient>
+    </defs>
+    <!-- nog te bouwen (gestippeld) -->
+    <line x1="14" y1="8" x2="1426" y2="8" stroke="#0b2436" stroke-opacity="0.22" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 13"></line>
+    <!-- gebouwd deel -->
+    <line class="zs-built" x1="14" y1="8" x2="1426" y2="8" stroke="url(#zsBuildGrad)" stroke-width="4.5" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"></line>
+  </svg>
+
+  <!-- oever-knopen -->
+  <span class="absolute h-2.5 w-2.5 rounded-full bg-sea-600 ring-2 ring-cream" style="left:1%;bottom:84px;transform:translate(-50%,50%)"></span>
+  <span class="zs-shore-end absolute h-2.5 w-2.5 rounded-full bg-ink/25 ring-2 ring-cream" style="left:99%;bottom:84px;transform:translate(-50%,50%)"></span>
+
+  <!-- mini-labels -->
+  <span class="absolute font-mono text-[10px] font-medium text-mist" style="left:1%;bottom:60px;transform:translateX(-50%)">jan</span>
+  <span class="absolute font-mono text-[10px] font-medium text-mist" style="left:99%;bottom:60px;transform:translateX(-50%)">mei</span>
+
+  <!-- bouwvakker -->
+  <div class="zs-worker absolute" style="left:1%;bottom:86px;transform:translateX(-50%)">
+    <svg width="46" height="54" viewBox="0 0 48 56" fill="none" aria-hidden="true">
+      <ellipse cx="24" cy="54" rx="12" ry="2.4" fill="#0b2436" opacity="0.12"></ellipse>
+      <rect x="18" y="38" width="5" height="13" rx="2.5" fill="#114c7f"></rect>
+      <rect x="25" y="38" width="5" height="13" rx="2.5" fill="#114c7f"></rect>
+      <path d="M15.5 49H24v3a1 1 0 0 1-1 1h-6.5a1 1 0 0 1-1-1z" fill="#0b2436"></path>
+      <path d="M24 49h8.5v3a1 1 0 0 1-1 1H25a1 1 0 0 1-1-1z" fill="#0b2436"></path>
+      <rect x="15" y="22" width="18" height="19" rx="6" fill="#2479ba"></rect>
+      <rect x="21" y="22" width="6" height="19" fill="#2ed3c9"></rect>
+      <circle cx="24" cy="15" r="6.2" fill="#f2c6a0"></circle>
+      <path d="M15.5 13a8.5 8.5 0 0 1 17 0Z" fill="#fb6b49"></path>
+      <rect x="13.5" y="11.6" width="21" height="3.2" rx="1.6" fill="#e9522f"></rect>
+      <rect x="23" y="5.6" width="2" height="3" rx="1" fill="#e9522f"></rect>
+      <g class="zs-arm">
+        <rect x="30" y="25" width="10" height="4.5" rx="2.25" fill="#f2c6a0"></rect>
+        <rect x="38.5" y="13.5" width="3.4" height="15.5" rx="1.5" fill="#9a6a3a"></rect>
+        <rect x="35" y="10.5" width="10.5" height="5.6" rx="1.6" fill="#5b6b7a"></rect>
+      </g>
+      <g class="zs-spark" opacity="0">
+        <path d="M45 31l1.4 2.1-2.1.2 1 2-2.2-1.1-.3 2.1-1.1-1.9-2 .8 1.1-2.1-2-.4 2-1.1Z" fill="#f6b73c"></path>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<style>
+  @keyframes zs-hammer {
+    0%, 100% { transform: rotate(-24deg); }
+    45%, 55% { transform: rotate(16deg); }
+  }
+  @keyframes zs-spark {
+    0%, 42% { opacity: 0; transform: scale(0.6); }
+    52% { opacity: 1; transform: scale(1); }
+    72%, 100% { opacity: 0; transform: scale(1.1); }
+  }
+  @keyframes zs-bob {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-1.5px); }
+  }
+  .zs-worker { animation: zs-bob 1.2s ease-in-out infinite; transition: left 0.4s linear; }
+  .zs-worker .zs-arm { transform-box: fill-box; transform-origin: 6% 55%; animation: zs-hammer 1.2s ease-in-out infinite; }
+  .zs-worker .zs-spark { transform-box: fill-box; transform-origin: center; animation: zs-spark 1.2s ease-in-out infinite; }
+  .zs-built { transition: stroke-dashoffset 0.5s var(--ease-out-quart, ease); }
+  @media (prefers-reduced-motion: reduce) {
+    .zs-worker, .zs-worker .zs-arm, .zs-worker .zs-spark { animation: none; }
+  }
+</style>
+
+<script>
+  const CLOSE_START = new Date('2027-01-01T00:00:00').getTime();
+  const CLOSE_END = new Date('2027-05-01T00:00:00').getTime();
+  const clamp = (v: number) => Math.max(0, Math.min(1, v));
+  const now = Date.now();
+  let p = clamp((now - CLOSE_START) / (CLOSE_END - CLOSE_START));
+
+  const ov = new URLSearchParams(window.location.search).get('tunnel');
+  if (ov !== null) {
+    const v = parseFloat(ov);
+    if (!Number.isNaN(v)) p = clamp(v);
+  }
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const built = document.querySelector<SVGLineElement>('.zs-built');
+  const worker = document.querySelector<HTMLElement>('.zs-worker');
+  const shoreEnd = document.querySelector<HTMLElement>('.zs-shore-end');
+
+  const apply = (frac: number) => {
+    if (built) built.style.strokeDashoffset = String(100 * (1 - frac));
+    if (worker) worker.style.left = (1 + frac * 98).toFixed(2) + '%';
+  };
+
+  if (shoreEnd && p >= 1) {
+    shoreEnd.classList.remove('bg-ink/25');
+    shoreEnd.classList.add('bg-aqua-500');
+  }
+
+  let first = true;
+  try {
+    first = !sessionStorage.getItem('zs_build_intro');
+    sessionStorage.setItem('zs_build_intro', '1');
+  } catch {}
+
+  if (first && !reduce) {
+    // intro: bouwvakker loopt de volledige tijdlijn af en bouwt mee, daarna terug naar de echte stand
+    const dur = 1900;
+    const t0 = performance.now();
+    if (worker) worker.style.transition = 'none';
+    const tick = (t: number) => {
+      const k = Math.min(1, (t - t0) / dur);
+      const e = 1 - Math.pow(1 - k, 3);
+      apply(e); // 0 -> 1 over de hele lijn
+      if (k < 1) requestAnimationFrame(tick);
+      else {
+        if (worker) worker.style.transition = 'left 0.8s var(--ease-out-quart, ease)';
+        requestAnimationFrame(() => apply(p)); // settle naar datum-stand
+      }
+    };
+    apply(0);
+    requestAnimationFrame(tick);
+  } else {
+    apply(p);
+  }
+</script>
