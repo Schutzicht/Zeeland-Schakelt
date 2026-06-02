@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import TidalLines from '../components/TidalLines.astro';
 import { CATEGORIES } from '../data/taxonomy';
 import { SEED_LISTINGS } from '../data/listings';
 import { listingCardHTML } from '../lib/cardTemplate';
@@ -89,7 +88,6 @@ const features = [
     </div>
     <div class="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/60 to-ink/25"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-ink/40 to-transparent"></div>
-    <TidalLines class="pointer-events-none absolute inset-0 h-full w-full text-white/15" />
     <div class="pointer-events-none absolute -right-32 -top-32 h-[34rem] w-[34rem] rounded-full bg-aqua-500/15 blur-3xl"></div>
     <div class="pointer-events-none absolute -bottom-40 left-1/4 h-96 w-96 rounded-full bg-coral-500/10 blur-3xl"></div>
 

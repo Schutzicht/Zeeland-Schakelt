@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import TidalLines from '../components/TidalLines.astro';
 import { CATEGORIES, REGION_LABEL } from '../data/taxonomy';
 import { TOWNS } from '../data/towns';
 
@@ -16,7 +15,6 @@ const townsZuid = TOWNS.filter((t) => t.region === 'zuid');
   <!-- Kop -->
   <section class="relative overflow-hidden bg-gradient-to-br from-sea-700 to-aqua-600 text-white">
     <div class="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl"></div>
-    <TidalLines class="pointer-events-none absolute inset-0 h-full w-full text-white/15" />
     <div class="relative mx-auto max-w-5xl px-4 pb-12 pt-16 sm:px-6 sm:pt-20 lg:px-8">
       <span data-reveal class="zs-eyebrow" style="color:rgba(255,255,255,0.92)">Slim plannen</span>
       <h1 data-reveal style="--d:1" class="hero-title zs-h1 mt-4 max-w-2xl font-display font-extrabold">
