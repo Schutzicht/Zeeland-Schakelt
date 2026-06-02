@@ -59,7 +59,7 @@ const months = [
   }
 
   <!-- bouwvakker (HTML, volgt de curve) -->
-  <div class="zs-worker absolute" style="left:1.5%;bottom:84px;transform:translateX(-50%)">
+  <div class="zs-worker absolute" style="left:9%;bottom:84px;transform:translateX(-50%)">
     <div class="zs-worker-bob">
       <svg width="56" height="66" viewBox="0 0 48 56" fill="none" aria-hidden="true">
         <ellipse cx="24" cy="54" rx="13" ry="2.6" fill="#0b2436" opacity="0.14"></ellipse>
@@ -123,6 +123,9 @@ const months = [
     if (!Number.isNaN(v)) p = clamp(v);
   }
 
+  // minimum-stand zodat de bouwvakker ook op dag 1 duidelijk in beeld staat
+  const restFrac = Math.max(p, 0.09);
+
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const built = document.querySelector<SVGPathElement>('.zs-built');
   const worker = document.querySelector<HTMLElement>('.zs-worker');
@@ -172,12 +175,12 @@ const months = [
       if (k < 1) requestAnimationFrame(tick);
       else {
         if (worker) worker.style.transition = 'left 0.8s var(--ease-out-quart, ease), bottom 0.8s var(--ease-out-quart, ease)';
-        requestAnimationFrame(() => apply(p));
+        requestAnimationFrame(() => apply(restFrac));
       }
     };
     apply(0);
     requestAnimationFrame(tick);
   } else {
-    apply(p);
+    apply(restFrac);
   }
 </script>
