@@ -104,6 +104,22 @@ const milestones = [
   <!-- confetti-laag -->
   <div class="zs-confetti pointer-events-none absolute inset-0"></div>
 
+  <!-- opbouwende file achter de werkzaamheden -->
+  <div class="zs-queue pointer-events-none absolute inset-0">
+    {
+      Array.from({ length: 7 }).map(() => (
+        <div class="zs-qcar absolute" style="opacity:0;left:0;bottom:0">
+          <svg width="26" height="15" viewBox="0 0 40 22" fill="none" aria-hidden="true">
+            <path d="M3 14l3-7a3 3 0 0 1 2.7-1.7h14.6A3 3 0 0 1 28 6l4 4 5 1a2 2 0 0 1 2 2v3H3z" fill="currentColor"></path>
+            <path d="M9 7h8v4H7z" fill="#bfe3ff" opacity="0.85"></path>
+            <circle cx="12" cy="17" r="3" fill="#0b2436"></circle>
+            <circle cx="30" cy="17" r="3" fill="#0b2436"></circle>
+          </svg>
+        </div>
+      ))
+    }
+  </div>
+
   <!-- bouwvakker (volgt de curve) + label + stof -->
   <div class="zs-worker pointer-events-none absolute" style="left:1.5%;bottom:72px">
     <span class="zs-daylabel absolute bottom-[60px] left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-white px-2 py-[3px] font-mono text-[10px] font-semibold text-ink shadow-sm ring-1 ring-ink/10">Dag 0 / 120</span>
@@ -198,8 +214,18 @@ const milestones = [
   .zs-track { touch-action: none; }
   .zs-track:active { cursor: grabbing; }
 
+  .zs-qcar { transition: left 0.45s linear, bottom 0.45s linear, opacity 0.3s ease; }
+  .zs-qcar svg { display: block; animation: zs-idle 1.7s ease-in-out infinite; }
+  .zs-qcar:nth-child(2) svg { animation-delay: 0.25s; }
+  .zs-qcar:nth-child(3) svg { animation-delay: 0.5s; }
+  .zs-qcar:nth-child(4) svg { animation-delay: 0.1s; }
+  .zs-qcar:nth-child(5) svg { animation-delay: 0.4s; }
+  .zs-qcar:nth-child(6) svg { animation-delay: 0.6s; }
+  .zs-qcar:nth-child(7) svg { animation-delay: 0.2s; }
+  @keyframes zs-idle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1px); } }
+
   @media (prefers-reduced-motion: reduce) {
-    .zs-worker-bob, .zs-worker .zs-arm, .zs-worker .zs-spark, .zs-worker .zs-chip, .zs-dust span, .zs-crane .zs-hook { animation: none; }
+    .zs-worker-bob, .zs-worker .zs-arm, .zs-worker .zs-spark, .zs-worker .zs-chip, .zs-dust span, .zs-crane .zs-hook, .zs-qcar svg { animation: none; }
     .zs-worker .zs-spark, .zs-worker .zs-chip, .zs-dust span { opacity: 0; }
   }
 </style>
@@ -233,6 +259,10 @@ const milestones = [
   const car = document.querySelector<HTMLElement>('.zs-car');
   const reopen = document.querySelector<HTMLElement>('.zs-reopen');
   const confetti = document.querySelector<HTMLElement>('.zs-confetti');
+  const qcars = Array.from(document.querySelectorAll<HTMLElement>('.zs-qcar'));
+  const QCOLORS = ['#e9522f', '#2479ba', '#5b6b7a', '#f6b73c', '#76828e', '#2ed3c9', '#0c9290'];
+  qcars.forEach((c, i) => (c.style.color = QCOLORS[i % QCOLORS.length]));
+  const QSP = 0.05;
   const len = built ? built.getTotalLength() : 0;
 
   const ptAt = (frac: number) => built!.getPointAtLength(len * clamp(frac));
@@ -255,6 +285,17 @@ const milestones = [
     if (built) built.style.strokeDashoffset = String(100 * (1 - frac));
     place(worker, frac, 6);
     if (dayLabel) dayLabel.textContent = `Dag ${Math.round(frac * DAYS)} / ${DAYS} · ${Math.round(frac * 100)}%`;
+    // opbouwende file achter de vakker
+    const qn = frac >= 0.999 ? 0 : Math.round(Math.min(frac, 0.97) * qcars.length);
+    qcars.forEach((c, i) => {
+      const fi = frac - (i + 1) * QSP;
+      if (i < qn && fi > 0.01) {
+        place(c, fi, 2);
+        c.style.opacity = '1';
+      } else {
+        c.style.opacity = '0';
+      }
+    });
     flags.forEach((f) => f.classList.toggle('passed', frac >= Number(f.dataset.frac) - 0.001));
     if (shoreEnd) {
       shoreEnd.classList.toggle('bg-ink/30', frac < 1);
