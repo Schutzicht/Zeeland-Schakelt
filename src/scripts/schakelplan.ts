@@ -244,6 +244,60 @@ function pushMsg(who: 'user' | 'bot', html: string, cardsHtml = '') {
 
 const ctx = { home: '', work: '', needs: [] as CategoryId[], free: false };
 
+type ChatTurn = { role: 'user' | 'bot'; text: string };
+const history: ChatTurn[] = [];
+
+// Toont een "aan het typen" bubbel; geeft het element terug zodat we het kunnen verwijderen.
+function pushTyping(): HTMLElement | null {
+  const log = $('chat-log');
+  if (!log) return null;
+  const wrap = document.createElement('div');
+  wrap.className = 'flex items-start gap-2.5';
+  wrap.innerHTML = `<span class="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-sea-500 to-aqua-500 text-white">${icon('sparkle', { size: 16 })}</span>
+    <div class="rounded-2xl rounded-tl-md bg-foam px-4 py-3.5"><span class="zs-typing" aria-label="Aan het typen"><i></i><i></i><i></i></span></div>`;
+  log.appendChild(wrap);
+  log.scrollTop = log.scrollHeight;
+  return wrap;
+}
+
+// Bijpassende kaartjes uit ons eigen aanbod (alleen als er een plaats bekend is).
+function cardsFor(text: string): string {
+  const p = parse(text);
+  if (p.towns[0]) ctx.home = p.towns[0];
+  if (p.towns[1]) ctx.work = p.towns[1];
+  if (p.needs.length) ctx.needs = p.needs;
+  if (p.free) ctx.free = true;
+  if (!ctx.home) return '';
+  const needs = ctx.needs.length ? ctx.needs : (['werkplek'] as CategoryId[]);
+  const recs = recommend({ homeTown: ctx.home, needs: needs.filter((n) => n !== 'carpool'), free: ctx.free, limit: 3 });
+  const carpool = needs.includes('carpool') ? recommend({ homeTown: ctx.home, needs: ['carpool'], limit: 2 }) : [];
+  return [...recs, ...carpool].map(recRow).join('');
+}
+
+// Stuurt een bericht: eerst echt Gemini (server-endpoint), valt anders terug op de lokale assistent.
+async function send(text: string) {
+  pushMsg('user', escapeHtml(text));
+  history.push({ role: 'user', text });
+  const typing = pushTyping();
+  try {
+    const res = await fetch('/api/maatje', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ message: text, history: history.slice(0, -1) }),
+    });
+    if (!res.ok) throw new Error('status ' + res.status);
+    const data = await res.json();
+    const reply: string = (data && data.reply) || '';
+    if (!reply) throw new Error('lege reactie');
+    typing?.remove();
+    history.push({ role: 'bot', text: reply });
+    pushMsg('bot', escapeHtml(reply).replace(/\n+/g, '<br>'), cardsFor(text));
+  } catch {
+    typing?.remove();
+    advise(text); // lokale fallback (geen sleutel beschikbaar of offline)
+  }
+}
+
 const NEED_WORDS: Record<CategoryId, string[]> = {
   werkplek: ['werkplek', 'flex', 'kantoor', 'werken', 'bureau'],
   vergaderruimte: ['vergader', 'meeting', 'overleg', 'projectruimte'],
@@ -314,15 +368,13 @@ function initChat() {
     const input = $('chat-input') as HTMLInputElement;
     const text = input.value.trim();
     if (!text) return;
-    pushMsg('user', escapeHtml(text));
     input.value = '';
-    setTimeout(() => advise(text), 250);
+    void send(text);
   });
   document.querySelectorAll<HTMLButtonElement>('.chat-chip').forEach((chip) => {
     chip.addEventListener('click', () => {
-      const input = $('chat-input') as HTMLInputElement;
-      input.value = chip.textContent?.trim() ?? '';
-      $('chat-form')?.dispatchEvent(new Event('submit'));
+      const text = chip.textContent?.trim();
+      if (text) void send(text);
     });
   });
 }
