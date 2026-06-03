@@ -168,7 +168,7 @@ const milestones = [
   </div>
 
   <!-- sleep-track (scrubben) -->
-  <div class="zs-track pointer-events-auto absolute inset-x-0 cursor-grab" style="bottom:46px;height:62px" title="Sleep om door de werkzaamheden te scrubben"></div>
+  <div class="zs-track pointer-events-auto absolute inset-x-0 z-20 cursor-grab" style="bottom:46px;height:62px" title="Sleep om door de werkzaamheden te scrubben"></div>
 </div>
 
 <style>
@@ -217,6 +217,11 @@ const milestones = [
   .zs-track:active { cursor: grabbing; }
 
   .zs-qcar { transition: left 0.45s linear, bottom 0.45s linear, opacity 0.3s ease; }
+  /* tijdens slepen: geen transitie-lag, poppetje/lijn/file volgen de cursor 1:1 */
+  .zs-build.zs-scrubbing .zs-worker,
+  .zs-build.zs-scrubbing .zs-daylabel,
+  .zs-build.zs-scrubbing .zs-built,
+  .zs-build.zs-scrubbing .zs-qcar { transition: none !important; }
   .zs-qcar svg { display: block; position: relative; z-index: 1; animation: zs-idle 1.7s ease-in-out infinite; }
   .zs-qcar:nth-child(3n) svg { animation-delay: 0.2s; }
   .zs-qcar:nth-child(3n + 1) svg { animation-delay: 0.55s; }
@@ -347,22 +352,44 @@ const milestones = [
     }
   }
 
-  // sleep-track: scrubben
+  // sleep-track: scrubben (soepel: transities uit + max 1 update per frame)
   if (track && root) {
     let dragging = false;
-    const setFromX = (clientX: number) => {
-      const r = root.getBoundingClientRect();
-      applyAll(clamp((clientX - r.left) / r.width));
+    let pendingX = 0;
+    let raf = 0;
+    let rect: DOMRect | null = null;
+    const flush = () => {
+      raf = 0;
+      const r = rect ?? root.getBoundingClientRect();
+      applyAll(clamp((pendingX - r.left) / r.width));
+    };
+    const queue = (clientX: number) => {
+      pendingX = clientX;
+      if (!raf) raf = requestAnimationFrame(flush);
     };
     track.addEventListener('pointerdown', (e) => {
       dragging = true;
+      rect = root.getBoundingClientRect(); // 1x meten, niet per move
+      root.classList.add('zs-scrubbing');
       track.setPointerCapture(e.pointerId);
-      setFromX(e.clientX);
+      queue(e.clientX);
     });
-    track.addEventListener('pointermove', (e) => dragging && setFromX(e.clientX));
-    const stop = () => (dragging = false);
+    track.addEventListener('pointermove', (e) => {
+      if (dragging) queue(e.clientX);
+    });
+    const stop = () => {
+      if (!dragging) return;
+      dragging = false;
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+      rect = null;
+      root.classList.remove('zs-scrubbing');
+    };
     track.addEventListener('pointerup', stop);
     track.addEventListener('pointercancel', stop);
+    track.addEventListener('lostpointercapture', stop);
   }
 
   // start: intro-sweep daarna naar de datum-stand
