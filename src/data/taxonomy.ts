@@ -38,17 +38,6 @@ export const CATEGORIES: CategoryMeta[] = [
     blurb: 'Ruimtes om samen te werken of af te spreken.',
   },
   {
-    id: 'overnachting',
-    label: 'Overnachten',
-    short: 'Overnachten',
-    channel: 'Overnachten',
-    color: '#7a4bd0',
-    tint: '#f0eafb',
-    icon: 'bed',
-    image: '/images/zeeland-schakelt/generated/cat-overnachting.png',
-    blurb: 'Blijf slapen aan de juiste kant van de tunnel.',
-  },
-  {
     id: 'carpool',
     label: 'Carpool & mobiliteit',
     short: 'Mobiliteit',
