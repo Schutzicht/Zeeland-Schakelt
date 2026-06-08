@@ -1,0 +1,633 @@
+---
+// Presentatiemodus + demo-disclaimer voor de live meeting.
+// - Disclaimer verschijnt eenmalig bij het openen van de demo (per sessie).
+// - Vaste "Demo"-badge linksonder met een knop om de rondleiding te starten.
+// - Rondleiding: een meereizend kaartje dat door de demo leidt, features
+//   uitlicht met een spotlight en automatisch naar de juiste pagina navigeert.
+// Status leeft in sessionStorage; de UI wordt op elke paginalading hersteld.
+import { tourStops } from '../data/tour';
+const dataJson = JSON.stringify(tourStops);
+---
+
+<script type="application/json" id="demo-tour-data" set:html={dataJson}></script>
+
+<!-- Spotlight die het uitgelichte element omkadert en de rest dimt -->
+<div id="demo-tour-highlight" aria-hidden="true"></div>
+
+<!-- Vaste launcher linksonder -->
+<div id="demo-launcher" class="dt-launcher" hidden>
+  <button type="button" id="demo-launcher-badge" class="dt-launcher-badge" title="Toon de demo-uitleg">
+    <span class="dt-dot"></span> Demo
+  </button>
+  <button type="button" id="demo-launcher-start" class="dt-launcher-start">
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+    Rondleiding
+  </button>
+</div>
+
+<!-- Rondleiding-kaartje -->
+<aside id="demo-tour-card" class="dt-card" hidden role="dialog" aria-label="Rondleiding">
+  <div class="dt-card-top">
+    <button type="button" id="dt-menu-open" class="dt-step-counter" title="Overzicht, spring naar een onderdeel">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+      <span><span id="dt-step-now">1</span> / <span id="dt-step-total">1</span></span>
+    </button>
+    <div class="dt-card-tools">
+      <button type="button" id="dt-hide" class="dt-icon-btn" title="Even verbergen om vrij te klikken" aria-label="Verbergen">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
+      </button>
+      <button type="button" id="dt-close" class="dt-icon-btn" title="Rondleiding sluiten" aria-label="Sluiten">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+  </div>
+  <div class="dt-progress"><div id="dt-progress-bar" class="dt-progress-bar"></div></div>
+  <h3 id="dt-title" class="dt-title">Titel</h3>
+  <p id="dt-body" class="dt-body">Tekst</p>
+  <div class="dt-card-foot">
+    <button type="button" id="dt-prev" class="dt-btn dt-btn-ghost">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      Vorige
+    </button>
+    <button type="button" id="dt-next" class="dt-btn dt-btn-primary">
+      <span id="dt-next-label">Volgende</span>
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
+  </div>
+</aside>
+
+<!-- Mini-knop om de tijdelijk verborgen rondleiding terug te halen -->
+<button type="button" id="demo-tour-resume" class="dt-resume" hidden>
+  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+  Verder met rondleiding
+</button>
+
+<!-- Sprongmenu / inhoudsopgave -->
+<div id="demo-tour-menu" class="dt-menu-overlay" hidden>
+  <div class="dt-menu" role="dialog" aria-label="Overzicht rondleiding">
+    <div class="dt-menu-head">
+      <span class="dt-menu-title">Overzicht</span>
+      <button type="button" id="dt-menu-close" class="dt-icon-btn" aria-label="Sluiten">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div id="dt-menu-list" class="dt-menu-list"></div>
+  </div>
+</div>
+
+<!-- Disclaimer-modal -->
+<div id="demo-disclaimer" class="dt-modal-overlay" hidden>
+  <div class="dt-modal" role="dialog" aria-modal="true" aria-labelledby="dt-modal-title">
+    <span class="dt-modal-eyebrow"><span class="dt-dot"></span> Werkende demo</span>
+    <h2 id="dt-modal-title" class="dt-modal-title">Even kort vooraf</h2>
+    <p class="dt-modal-text">Dit is een werkende demo van Zeeland Schakelt. De opzet, de functies en de uitstraling zijn echt. De inhoud is dat nog niet: de plekken, namen, cijfers en teksten zijn voorbeelden om te laten zien wat er kan.</p>
+    <p class="dt-modal-text">De definitieve invulling doen we samen met de werkgroep zodra er akkoord is. Let dus vooral op de structuur en de mogelijkheden, niet op de exacte woorden of getallen.</p>
+    <div class="dt-modal-chips">
+      <span class="dt-chip">Teksten en koppen</span>
+      <span class="dt-chip">Plekken en aanbieders</span>
+      <span class="dt-chip">Namen en cijfers</span>
+      <span class="dt-chip">Voorbeeld-data</span>
+    </div>
+    <div class="dt-modal-foot">
+      <button type="button" id="dt-modal-start" class="dt-btn dt-btn-primary dt-btn-lg">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+        Start rondleiding
+      </button>
+      <button type="button" id="dt-modal-close" class="dt-btn dt-btn-ghost dt-btn-lg">Ik kijk zelf rond</button>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  :root { --dt-accent: #e9522f; --dt-navy: #114c7f; --dt-navy-deep: #0b2436; }
+
+  /* ---------- Spotlight ---------- */
+  #demo-tour-highlight {
+    position: fixed;
+    top: 0; left: 0; width: 0; height: 0;
+    border-radius: 14px;
+    pointer-events: none;
+    z-index: 9994;
+    opacity: 0;
+    box-shadow: 0 0 0 3px var(--dt-accent), 0 0 0 9999px rgba(11, 36, 54, 0.55);
+    transition: top .35s cubic-bezier(.2,.8,.2,1), left .35s cubic-bezier(.2,.8,.2,1),
+                width .35s cubic-bezier(.2,.8,.2,1), height .35s cubic-bezier(.2,.8,.2,1),
+                opacity .25s ease;
+  }
+  #demo-tour-highlight[data-on="true"] { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { #demo-tour-highlight { transition: opacity .2s ease; } }
+
+  /* ---------- Launcher ---------- */
+  .dt-launcher {
+    position: fixed;
+    bottom: 1.25rem; left: 1.25rem;
+    z-index: 9990;
+    display: inline-flex; align-items: center; gap: .4rem;
+    padding: .35rem .4rem .35rem .6rem;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+    border: 1px solid #e6dcc6;
+    border-radius: 999px;
+    box-shadow: 0 12px 32px -12px rgba(11,36,54,.28);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  .dt-launcher-badge {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-size: .68rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--dt-accent);
+    padding: .2rem .25rem; background: none; border: 0; cursor: pointer;
+  }
+  .dt-launcher-start {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-size: .8rem; font-weight: 700; color: #fff;
+    background: var(--dt-navy);
+    border: 0; border-radius: 999px; padding: .5rem .85rem; cursor: pointer;
+    transition: background .18s ease, transform .18s ease;
+  }
+  .dt-launcher-start:hover { background: var(--dt-navy-deep); transform: translateY(-1px); }
+  .dt-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--dt-accent); flex-shrink: 0; animation: dt-pulse 2s ease-in-out infinite; }
+  @keyframes dt-pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { .dt-dot { animation: none; } }
+
+  /* ---------- Rondleiding-kaartje ---------- */
+  .dt-card {
+    position: fixed;
+    bottom: 1.25rem; right: 1.25rem;
+    z-index: 9996;
+    width: min(380px, calc(100vw - 2rem));
+    background: #fff;
+    border: 1px solid #e6dcc6;
+    border-radius: 18px;
+    box-shadow: 0 28px 70px -18px rgba(11,36,54,.4), 0 4px 14px -6px rgba(11,36,54,.18);
+    padding: 1.05rem 1.15rem 1.15rem;
+    font-family: 'Inter', system-ui, sans-serif;
+    animation: dt-card-in .3s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes dt-card-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) { .dt-card { animation: none; } }
+  .dt-card-top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+  .dt-step-counter {
+    display: inline-flex; align-items: center; gap: .35rem;
+    font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: .72rem;
+    letter-spacing: .04em; color: var(--dt-accent);
+    background: rgba(233,82,47,.1); border: 1px solid rgba(233,82,47,.2);
+    padding: .25rem .6rem; border-radius: 999px; cursor: pointer;
+    transition: background .15s ease;
+  }
+  .dt-step-counter:hover { background: rgba(233,82,47,.18); }
+  .dt-step-counter svg { opacity: .8; }
+  .dt-card-tools { display: inline-flex; gap: .15rem; }
+  .dt-icon-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 8px; border: 0; background: none;
+    color: #6b8199; cursor: pointer; transition: background .15s ease, color .15s ease;
+  }
+  .dt-icon-btn:hover { background: #eef6fc; color: var(--dt-navy); }
+  .dt-progress { height: 3px; background: #eef0f3; border-radius: 999px; margin: .8rem 0 .9rem; overflow: hidden; }
+  .dt-progress-bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--dt-navy), var(--dt-accent)); border-radius: 999px; transition: width .35s cubic-bezier(.2,.8,.2,1); }
+  .dt-title { font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 800; font-size: 1.15rem; line-height: 1.15; color: #0b2436; letter-spacing: -.02em; margin: 0; }
+  .dt-body { font-size: .9rem; line-height: 1.55; color: #3a536b; margin: .55rem 0 0; }
+  .dt-card-foot { display: flex; align-items: center; justify-content: space-between; gap: .6rem; margin-top: 1.1rem; }
+
+  /* ---------- Knoppen ---------- */
+  .dt-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
+    font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 700; font-size: .85rem;
+    border-radius: 999px; padding: .55rem .95rem; border: 1px solid transparent; cursor: pointer;
+    transition: background .18s ease, transform .18s ease, color .18s ease, border-color .18s ease, opacity .18s ease;
+  }
+  .dt-btn-lg { padding: .7rem 1.2rem; font-size: .92rem; }
+  .dt-btn-primary { background: var(--dt-navy); color: #fff; }
+  .dt-btn-primary:hover { background: var(--dt-navy-deep); transform: translateY(-1px); }
+  .dt-btn-ghost { background: none; color: var(--dt-navy); }
+  .dt-btn-ghost:hover { background: #eef6fc; }
+  .dt-btn:disabled { opacity: .35; cursor: default; transform: none; }
+
+  /* ---------- Resume-pill ---------- */
+  .dt-resume {
+    position: fixed; bottom: 1.25rem; right: 1.25rem; z-index: 9996;
+    display: inline-flex; align-items: center; gap: .45rem;
+    font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 700; font-size: .82rem; color: #fff;
+    background: var(--dt-navy); border: 0; border-radius: 999px; padding: .6rem 1rem; cursor: pointer;
+    box-shadow: 0 16px 40px -12px rgba(11,36,54,.4);
+    transition: background .18s ease, transform .18s ease;
+  }
+  .dt-resume:hover { background: var(--dt-navy-deep); transform: translateY(-1px); }
+
+  /* ---------- Disclaimer-modal ---------- */
+  .dt-modal-overlay {
+    position: fixed; inset: 0; z-index: 10000;
+    display: flex; align-items: center; justify-content: center; padding: 1.25rem;
+    background: rgba(11,36,54,.55);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    animation: dt-fade .25s ease;
+  }
+  @keyframes dt-fade { from { opacity: 0; } to { opacity: 1; } }
+  .dt-modal {
+    width: min(540px, 100%);
+    max-height: calc(100dvh - 2.5rem); overflow-y: auto;
+    background: #fff; border-radius: 22px; padding: 1.75rem;
+    box-shadow: 0 40px 90px -24px rgba(11,36,54,.55);
+    font-family: 'Inter', system-ui, sans-serif;
+    animation: dt-modal-in .3s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes dt-modal-in { from { opacity: 0; transform: translateY(16px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .dt-modal-overlay, .dt-modal { animation: none; } }
+  .dt-modal-eyebrow {
+    display: inline-flex; align-items: center; gap: .45rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: .72rem; font-weight: 600;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--dt-accent);
+  }
+  .dt-modal-title { font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 800; font-size: clamp(1.5rem, 4vw, 2rem); line-height: 1.05; letter-spacing: -.03em; color: #0b2436; margin: .7rem 0 0; }
+  .dt-modal-text { font-size: .95rem; line-height: 1.6; color: #3a536b; margin: 1rem 0 0; }
+  .dt-modal-chips { display: flex; flex-wrap: wrap; gap: .45rem; margin: 1.25rem 0 0; }
+  .dt-chip {
+    font-family: 'Space Grotesk', system-ui, sans-serif; font-size: .76rem; font-weight: 600; color: var(--dt-navy);
+    background: #eef6fc; border: 1px solid #cfe0ee; border-radius: 999px; padding: .3rem .7rem;
+  }
+  .dt-modal-foot { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.6rem; }
+
+  /* ---------- Sprongmenu / inhoudsopgave ---------- */
+  .dt-menu-overlay {
+    position: fixed; inset: 0; z-index: 9998;
+    display: flex; align-items: center; justify-content: center; padding: 1.25rem;
+    background: rgba(11,36,54,.5);
+    backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+    animation: dt-fade .2s ease;
+  }
+  .dt-menu {
+    width: min(440px, 100%);
+    max-height: calc(100dvh - 2.5rem); display: flex; flex-direction: column;
+    background: #fff; border-radius: 18px; overflow: hidden;
+    box-shadow: 0 40px 90px -24px rgba(11,36,54,.55);
+    font-family: 'Inter', system-ui, sans-serif;
+    animation: dt-modal-in .25s cubic-bezier(.2,.8,.2,1);
+  }
+  @media (prefers-reduced-motion: reduce) { .dt-menu-overlay, .dt-menu { animation: none; } }
+  .dt-menu-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .9rem 1rem .9rem 1.25rem; border-bottom: 1px solid #eef0f3; flex-shrink: 0;
+  }
+  .dt-menu-title { font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 800; font-size: 1.05rem; color: #0b2436; }
+  .dt-menu-list { overflow-y: auto; padding: .5rem; }
+  .dt-menu-group {
+    font-family: 'IBM Plex Mono', monospace; font-size: .68rem; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--dt-accent);
+    padding: .9rem .75rem .35rem;
+  }
+  .dt-menu-item {
+    display: flex; align-items: center; gap: .65rem; width: 100%; text-align: left;
+    padding: .55rem .75rem; border: 0; background: none; border-radius: 10px; cursor: pointer;
+    font-family: 'Inter', system-ui, sans-serif; font-size: .9rem; color: #0b2436;
+    transition: background .14s ease;
+  }
+  .dt-menu-item:hover { background: #eef6fc; }
+  .dt-menu-item.is-current { background: #eef6fc; }
+  .dt-menu-num {
+    flex-shrink: 0; width: 1.5rem; height: 1.5rem; border-radius: 7px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', system-ui, sans-serif; font-weight: 700; font-size: .72rem;
+    background: #eef6fc; color: var(--dt-navy); border: 1px solid #cfe0ee;
+  }
+  .dt-menu-item.is-current .dt-menu-num { background: var(--dt-navy); color: #fff; border-color: var(--dt-navy); }
+
+  @media (min-width: 641px) {
+    .dt-card.dt-card-left { left: 1.25rem; right: auto; }
+  }
+  @media (max-width: 640px) {
+    .dt-card { left: 1rem; right: 1rem; bottom: 1rem; width: auto; }
+    .dt-launcher { bottom: 1rem; left: 1rem; }
+    .dt-resume { left: 1rem; right: 1rem; bottom: 1rem; justify-content: center; }
+  }
+</style>
+
+<script>
+  type TourStop = {
+    id: string; group: string; path: string; title: string; body: string;
+    selector?: string; clickBefore?: string[]; cardPos?: 'left' | 'right';
+  };
+
+  const KEY_SEEN = 'zs-demo-disclaimer-seen';
+  const KEY_ACTIVE = 'zs-demo-tour-active';
+  const KEY_STEP = 'zs-demo-tour-step';
+
+  let STOPS: TourStop[] | null = null;
+  let activeSelector: string | null = null;
+  let reduceMotion = false;
+
+  function getStops(): TourStop[] {
+    if (STOPS) return STOPS;
+    const el = document.getElementById('demo-tour-data');
+    try { STOPS = el ? JSON.parse(el.textContent || '[]') : []; }
+    catch { STOPS = []; }
+    return STOPS!;
+  }
+
+  function normPath(p: string): string {
+    p = (p || '/').split('?')[0].split('#')[0];
+    if (p.length > 1 && p.endsWith('/')) p = p.slice(0, -1);
+    return p || '/';
+  }
+
+  const $ = (id: string) => document.getElementById(id);
+
+  // ---------- Scrollen (Lenis-bewust) ----------
+  function scrollToCenter(el: HTMLElement) {
+    const lenis = (window as any).lenis;
+    const r = el.getBoundingClientRect();
+    const target = Math.max(0, window.scrollY + r.top - (window.innerHeight - r.height) / 2);
+    if (lenis && typeof lenis.scrollTo === 'function') {
+      lenis.scrollTo(target, { duration: reduceMotion ? 0 : 0.8 });
+    } else {
+      window.scrollTo({ top: target, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+  }
+  function scrollTop() {
+    const lenis = (window as any).lenis;
+    if (lenis && typeof lenis.scrollTo === 'function') lenis.scrollTo(0, { duration: reduceMotion ? 0 : 0.6 });
+    else window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  }
+
+  // ---------- Spotlight ----------
+  function isVisible(el: Element | null): el is HTMLElement {
+    if (!el) return false;
+    const he = el as HTMLElement;
+    const r = he.getBoundingClientRect();
+    if (r.width < 2 || r.height < 2) return false;
+    const cs = getComputedStyle(he);
+    return cs.display !== 'none' && cs.visibility !== 'hidden' && parseFloat(cs.opacity || '1') !== 0;
+  }
+
+  function positionHighlight(el: HTMLElement) {
+    const hl = $('demo-tour-highlight');
+    if (!hl) return;
+    const r = el.getBoundingClientRect();
+    const pad = 8;
+    const top = Math.max(4, r.top - pad);
+    const left = Math.max(4, r.left - pad);
+    const width = Math.min(window.innerWidth - 8, r.width + pad * 2);
+    const height = r.height + pad * 2;
+    hl.style.top = top + 'px';
+    hl.style.left = left + 'px';
+    hl.style.width = width + 'px';
+    hl.style.height = height + 'px';
+    hl.dataset.on = 'true';
+  }
+
+  function hideHighlight() {
+    const hl = $('demo-tour-highlight');
+    if (hl) hl.dataset.on = 'false';
+    activeSelector = null;
+  }
+
+  function repositionActive() {
+    if (!activeSelector) return;
+    const el = document.querySelector(activeSelector);
+    if (isVisible(el)) positionHighlight(el as HTMLElement);
+    else hideHighlight();
+  }
+
+  // ---------- State ----------
+  const isActive = () => sessionStorage.getItem(KEY_ACTIVE) === '1';
+  const getStep = () => parseInt(sessionStorage.getItem(KEY_STEP) || '0', 10) || 0;
+
+  function showLauncher(show: boolean) {
+    const l = $('demo-launcher');
+    if (l) (l as HTMLElement).hidden = !show;
+  }
+  function setCardHidden(hidden: boolean) {
+    const c = $('demo-tour-card');
+    if (c) (c as HTMLElement).hidden = hidden;
+  }
+
+  // ---------- Rondleiding renderen ----------
+  function renderStep(i: number) {
+    const stops = getStops();
+    if (!stops.length) return;
+    i = Math.max(0, Math.min(stops.length - 1, i));
+    const stop = stops[i];
+
+    sessionStorage.setItem(KEY_STEP, String(i));
+    sessionStorage.setItem(KEY_ACTIVE, '1');
+
+    const now = $('dt-step-now'); if (now) now.textContent = String(i + 1);
+    const total = $('dt-step-total'); if (total) total.textContent = String(stops.length);
+    const bar = $('dt-progress-bar'); if (bar) (bar as HTMLElement).style.width = ((i + 1) / stops.length * 100) + '%';
+    const title = $('dt-title'); if (title) title.textContent = stop.title;
+    const body = $('dt-body'); if (body) body.textContent = stop.body;
+    const prev = $('dt-prev') as HTMLButtonElement | null; if (prev) prev.disabled = i === 0;
+    const nextLabel = $('dt-next-label'); if (nextLabel) nextLabel.textContent = i === stops.length - 1 ? 'Afronden' : 'Volgende';
+
+    $('demo-tour-resume')!.hidden = true;
+    $('demo-disclaimer')!.hidden = true;
+    $('demo-tour-menu')!.hidden = true;
+    showLauncher(false);
+    setCardHidden(false);
+    document.body.classList.add('dt-tour-active');
+
+    const card = $('demo-tour-card');
+    if (card) card.classList.toggle('dt-card-left', stop.cardPos === 'left');
+
+    const activate = () => {
+      if (!stop.clickBefore) return;
+      for (const sel of stop.clickBefore) {
+        const t = document.querySelector(sel) as HTMLElement | null;
+        if (t) t.click();
+      }
+    };
+
+    let tries = 0;
+    const tryStep = () => {
+      activate();
+      const el = stop.selector ? document.querySelector(stop.selector) : null;
+      if (el && isVisible(el)) {
+        activeSelector = stop.selector!;
+        scrollToCenter(el as HTMLElement);
+        positionHighlight(el as HTMLElement);
+        setTimeout(repositionActive, 260);
+        setTimeout(repositionActive, 560);
+        setTimeout(repositionActive, 900);
+        return;
+      }
+      if (stop.selector && tries < 8) {
+        tries++;
+        setTimeout(tryStep, 100);
+        return;
+      }
+      hideHighlight();
+      scrollTop();
+    };
+    requestAnimationFrame(() => requestAnimationFrame(tryStep));
+  }
+
+  function goToStep(i: number) {
+    const stops = getStops();
+    if (!stops.length) return;
+    i = Math.max(0, Math.min(stops.length - 1, i));
+    sessionStorage.setItem(KEY_ACTIVE, '1');
+    sessionStorage.setItem(KEY_STEP, String(i));
+    const stop = stops[i];
+    if (normPath(location.pathname) !== normPath(stop.path)) {
+      hideHighlight();
+      window.location.assign(stop.path); // bij de volgende paginalading herstelt sync()
+    } else {
+      renderStep(i);
+    }
+  }
+
+  function startTour() {
+    sessionStorage.setItem(KEY_SEEN, '1');
+    goToStep(0);
+  }
+  function stopTour() {
+    sessionStorage.setItem(KEY_ACTIVE, '0');
+    hideHighlight();
+    setCardHidden(true);
+    $('demo-tour-resume')!.hidden = true;
+    document.body.classList.remove('dt-tour-active');
+    showLauncher(true);
+  }
+  function minimizeTour() {
+    hideHighlight();
+    setCardHidden(true);
+    document.body.classList.remove('dt-tour-active');
+    $('demo-tour-resume')!.hidden = false;
+  }
+
+  // ---------- Disclaimer ----------
+  function showModal() { const m = $('demo-disclaimer'); if (m) (m as HTMLElement).hidden = false; }
+  function closeModal(markSeen: boolean) {
+    const m = $('demo-disclaimer');
+    if (m) (m as HTMLElement).hidden = true;
+    if (markSeen) sessionStorage.setItem(KEY_SEEN, '1');
+    if (!isActive()) showLauncher(true);
+  }
+
+  // ---------- Sprongmenu ----------
+  function escapeHtml(s: string): string {
+    return s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c] as string));
+  }
+  function buildMenu() {
+    const stops = getStops();
+    const list = $('dt-menu-list');
+    if (!list) return;
+    const cur = getStep();
+    let html = '';
+    let lastGroup: string | null = null;
+    stops.forEach((s, i) => {
+      if (s.group !== lastGroup) {
+        html += `<div class="dt-menu-group">${escapeHtml(s.group)}</div>`;
+        lastGroup = s.group;
+      }
+      html += `<button type="button" class="dt-menu-item${i === cur ? ' is-current' : ''}" data-goto="${i}"><span class="dt-menu-num">${i + 1}</span><span>${escapeHtml(s.title)}</span></button>`;
+    });
+    list.innerHTML = html;
+  }
+  function openMenu() { buildMenu(); const m = $('demo-tour-menu'); if (m) (m as HTMLElement).hidden = false; }
+  function closeMenu() { const m = $('demo-tour-menu'); if (m) (m as HTMLElement).hidden = true; }
+  function menuOpen() { return !$('demo-tour-menu')?.hidden; }
+
+  // ---------- Sync bij elke paginalading ----------
+  function sync() {
+    reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stops = getStops();
+
+    if (isActive() && stops.length) {
+      let i = getStep();
+      const here = normPath(location.pathname);
+      if (stops[i] && normPath(stops[i].path) !== here) {
+        const j = stops.findIndex(s => normPath(s.path) === here);
+        if (j >= 0) i = j;
+      }
+      renderStep(i);
+    } else {
+      setCardHidden(true);
+      hideHighlight();
+      $('demo-tour-resume')!.hidden = true;
+      document.body.classList.remove('dt-tour-active');
+      if (sessionStorage.getItem(KEY_SEEN) === '1') showLauncher(true);
+    }
+
+    if (sessionStorage.getItem(KEY_SEEN) !== '1') {
+      showLauncher(false);
+      showModal();
+    }
+  }
+
+  // ---------- Event-binding ----------
+  function bindUI() {
+    const bind = (id: string, fn: () => void) => {
+      const el = $(id);
+      if (el && !el.dataset.dtBound) {
+        el.dataset.dtBound = '1';
+        el.addEventListener('click', (e) => { e.preventDefault(); fn(); });
+      }
+    };
+    bind('demo-launcher-start', startTour);
+    bind('demo-launcher-badge', showModal);
+    bind('dt-modal-start', startTour);
+    bind('dt-modal-close', () => closeModal(true));
+    bind('dt-close', stopTour);
+    bind('dt-hide', minimizeTour);
+    bind('demo-tour-resume', () => renderStep(getStep()));
+    bind('dt-prev', () => goToStep(getStep() - 1));
+    bind('dt-next', () => {
+      const stops = getStops();
+      const cur = getStep();
+      if (cur >= stops.length - 1) stopTour();
+      else goToStep(cur + 1);
+    });
+    bind('dt-menu-open', openMenu);
+    bind('dt-menu-close', closeMenu);
+
+    const overlay = $('demo-tour-menu');
+    if (overlay && !overlay.dataset.dtBound) {
+      overlay.dataset.dtBound = '1';
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) closeMenu(); });
+    }
+    const list = $('dt-menu-list');
+    if (list && !list.dataset.dtBound) {
+      list.dataset.dtBound = '1';
+      list.addEventListener('click', (e) => {
+        const btn = (e.target as HTMLElement).closest('[data-goto]') as HTMLElement | null;
+        if (!btn) return;
+        closeMenu();
+        goToStep(parseInt(btn.getAttribute('data-goto') || '0', 10));
+      });
+    }
+  }
+
+  function bindGlobalOnce() {
+    if ((window as any).__dtGlobal) return;
+    (window as any).__dtGlobal = true;
+    let ticking = false;
+    const onMove = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { repositionActive(); ticking = false; });
+    };
+    window.addEventListener('scroll', onMove, { passive: true });
+    window.addEventListener('resize', onMove, { passive: true });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (menuOpen()) { closeMenu(); return; }
+        if (isActive()) stopTour();
+        return;
+      }
+      if (!isActive() || menuOpen()) return;
+      if (e.key === 'ArrowRight') { const s = getStops(); const c = getStep(); if (c < s.length - 1) goToStep(c + 1); }
+      else if (e.key === 'ArrowLeft') { if (getStep() > 0) goToStep(getStep() - 1); }
+    });
+  }
+
+  function setup() {
+    bindGlobalOnce();
+    bindUI();
+    sync();
+  }
+
+  if (document.readyState !== 'loading') setup();
+  else document.addEventListener('DOMContentLoaded', setup);
+</script>

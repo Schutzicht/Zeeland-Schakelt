@@ -48,7 +48,7 @@ const urenWeek = Math.round((schakelaars * weeklySavings(3).min) / 60);
 
   <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
     <!-- Grote tellers -->
-    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+    <div data-tour="impact" class="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {
         [
           { count: schakelaars, suffix: '', label: 'mensen schakelen nu', icon: 'users', live: true, color: '#155f9c' },
